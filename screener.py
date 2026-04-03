@@ -1,21 +1,54 @@
 """
-Stock1 기술적 스크리너 v2 (Quantocracy 검증 전략 적용)
+Stock1 기술적 스크리너 v4
 - FinanceDataReader로 KOSPI/KOSDAQ 전 종목 OHLCV 수집
 - pandas-ta로 기술적 지표 계산
-- 복합 스코어링 시스템으로 종목 순위화
+- 복합 스코어링 + 수급/펀더멘탈 필터
 - ATR 기반 손절/목표가 산출
+- Quantocracy 전략 인사이트 연동
 """
 
 import json
 import os
+import time
 from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
 import pandas_ta as ta
+import requests
 import FinanceDataReader as fdr
 
 LOOKBACK_DAYS = 250
+NAVER_API_DELAY = 0.1  # 네이버 API 호출 간 딜레이
+
+
+def get_fundamental_data(code):
+    """네이버 증권 API에서 PER/PBR/외국인/배당 등 수집"""
+    try:
+        url = f"https://m.stock.naver.com/api/stock/{code}/integration"
+        resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=5)
+        if resp.status_code != 200:
+            return {}
+        data = resp.json()
+        result = {}
+        for info in data.get("totalInfos", []):
+            key = info.get("key", "")
+            val = info.get("value", "")
+            if key == "PER":
+                result["per"] = float(val.replace("배", "").replace(",", "").strip()) if val else None
+            elif key == "PBR":
+                result["pbr"] = float(val.replace("배", "").replace(",", "").strip()) if val else None
+            elif key == "외인소진율":
+                result["foreign_ratio"] = float(val.replace("%", "").replace(",", "").strip()) if val else None
+            elif key == "배당수익률":
+                result["dividend_yield"] = float(val.replace("%", "").replace(",", "").strip()) if val else None
+            elif key == "EPS":
+                result["eps"] = float(val.replace("원", "").replace(",", "").strip()) if val else None
+            elif key == "ROE":
+                result["roe"] = float(val.replace("%", "").replace(",", "").strip()) if val else None
+        return result
+    except Exception:
+        return {}
 OUTPUT_PATH = os.path.join(os.path.dirname(__file__), "docs", "signals.json")
 MIN_PRICE = 1000
 MIN_VOLUME = 10000
@@ -140,8 +173,8 @@ def calc_indicators(df):
     return df
 
 
-def score_stock(df):
-    """복합 스코어링 (Quantocracy 기반 다중 팩터)"""
+def score_stock(df, fundamental=None):
+    """복합 스코어링 (기술 40% + 수급 30% + 펀더멘탈 20% + 매크로 10%)"""
     if df is None or len(df) < MIN_DAYS:
         return 0, []
 
@@ -149,6 +182,7 @@ def score_stock(df):
     prev = df.iloc[-2]
     score = 0
     reasons = []
+    fund = fundamental or {}
 
     # 1. 추세 (Trend Following — Quantocracy 236회 언급)
     if pd.notna(last.get("ma200")) and last["close"] > last["ma200"]:
@@ -253,6 +287,48 @@ def score_stock(df):
         if vol_ratio < 0.5:
             score -= 5
             reasons.append(f"⚠ 거래량 급감 ({vol_ratio:.0%})")
+
+    # === 펀더멘탈 팩터 (레이어 2) ===
+
+    # 14. PER 적정 구간 (밸류)
+    per = fund.get("per")
+    if per is not None and per > 0:
+        if per < 15:
+            score += 8
+            reasons.append(f"PER 저평가 ({per:.1f}배)")
+        elif per > 50:
+            score -= 5
+            reasons.append(f"⚠ PER 고평가 ({per:.0f}배)")
+
+    # 15. PBR 저평가
+    pbr = fund.get("pbr")
+    if pbr is not None:
+        if 0 < pbr < 1.0:
+            score += 6
+            reasons.append(f"PBR 자산가치 이하 ({pbr:.2f}배)")
+
+    # 16. 외국인 보유비율
+    foreign = fund.get("foreign_ratio")
+    if foreign is not None:
+        if foreign > 20:
+            score += 5
+            reasons.append(f"외국인 보유 {foreign:.1f}%")
+
+    # 17. 배당수익률
+    div_yield = fund.get("dividend_yield")
+    if div_yield is not None and div_yield > 2.0:
+        score += 4
+        reasons.append(f"배당 {div_yield:.1f}%")
+
+    # 18. EPS 양수 (흑자 필터)
+    eps = fund.get("eps")
+    if eps is not None:
+        if eps > 0:
+            score += 3
+            reasons.append("EPS 흑자")
+        else:
+            score -= 8
+            reasons.append("⚠ EPS 적자")
 
     return score, reasons
 
@@ -437,8 +513,19 @@ def run_screener():
         if df is None:
             continue
 
+        # 기본 스코어 (기술적)
         score, reasons = score_stock(df)
         stock_signals = check_signals(df, score, reasons)
+
+        if not stock_signals:
+            continue
+
+        # 시그널 발생 종목만 펀더멘탈 데이터 수집 (API 호출 절약)
+        fund = get_fundamental_data(code)
+        if fund:
+            score, reasons = score_stock(df, fund)
+            time.sleep(NAVER_API_DELAY)
+
         entry, stop_loss, target = calc_atr_targets(df)
 
         for sig_type, sig_detail in stock_signals:
@@ -454,10 +541,15 @@ def run_screener():
                 "change_rate": change_rate,
                 "score": score,
                 "signal_detail": sig_detail,
-                "reasons": ", ".join(reasons[:3]),
+                "reasons": ", ".join(reasons[:5]),
                 "entry": entry,
                 "stop_loss": stop_loss,
                 "target": target,
+                "per": fund.get("per"),
+                "pbr": fund.get("pbr"),
+                "foreign_ratio": fund.get("foreign_ratio"),
+                "dividend_yield": fund.get("dividend_yield"),
+                "eps": fund.get("eps"),
             })
 
     # 스코어 기준 정렬 + 상위 20개
