@@ -356,6 +356,47 @@ def check_signals(df, score, reasons):
     return signals
 
 
+def get_related_articles():
+    """시그널별 Quantocracy 관련 글 매칭"""
+    db_path = os.path.join(os.path.dirname(__file__), "quantocracy.db")
+    if not os.path.exists(db_path):
+        return {}
+
+    import sqlite3
+    conn = sqlite3.connect(db_path)
+
+    # 시그널 타입 → 검색 키워드 매핑
+    signal_keywords = {
+        "golden_cross": ["golden cross", "moving average crossover", "MA cross"],
+        "breakout": ["breakout", "range breakout", "resistance break", "new high"],
+        "pullback": ["pullback", "dip buying", "buy the dip", "mean reversion support"],
+        "oversold": ["oversold", "RSI", "bounce", "reversal"],
+        "volume_spike": ["volume", "volume spike", "unusual volume", "volume breakout"],
+        "mean_reversion": ["mean reversion", "bollinger", "Z-score", "reversion"],
+        "dual_momentum": ["dual momentum", "absolute momentum", "relative momentum", "trend following momentum"],
+        "donchian_breakout": ["donchian", "channel breakout", "turtle trading"],
+        "new_high": ["new high", "52 week high", "all time high", "momentum"],
+        "bounce_after_drop": ["consecutive", "reversal", "oversold bounce", "dead cat"],
+    }
+
+    result = {}
+    for sig_type, keywords in signal_keywords.items():
+        conditions = " OR ".join([f"LOWER(title||description) LIKE '%{kw.lower()}%'" for kw in keywords])
+        rows = conn.execute(f"""
+            SELECT title, source, url, description
+            FROM articles WHERE {conditions}
+            ORDER BY published_at DESC LIMIT 3
+        """).fetchall()
+
+        result[sig_type] = [
+            {"title": t, "source": s, "url": u, "summary": d[:200]}
+            for t, s, u, d in rows
+        ]
+
+    conn.close()
+    return result
+
+
 def run_screener():
     end = datetime.now()
     start = end - timedelta(days=LOOKBACK_DAYS)
@@ -423,10 +464,14 @@ def run_screener():
     for key in signals:
         signals[key] = sorted(signals[key], key=lambda x: x["score"], reverse=True)[:20]
 
+    # Quantocracy 관련 글 매칭
+    related_articles = get_related_articles()
+
     result = {
         "updated": datetime.now().isoformat(),
         "total_scanned": len(tickers),
         "signals": signals,
+        "related_articles": related_articles,
         "summary": {k: len(v) for k, v in signals.items()},
     }
 
