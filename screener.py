@@ -100,9 +100,42 @@ def calc_indicators(df):
 
     # 모멘텀 (Quantocracy 검증: 12-1개월 모멘텀)
     if len(df) >= 252:
-        df["mom_12m"] = df["close"].pct_change(252)  # 12개월 수익률
+        df["mom_12m"] = df["close"].pct_change(252)
     if len(df) >= 21:
-        df["mom_1m"] = df["close"].pct_change(21)   # 1개월 수익률
+        df["mom_1m"] = df["close"].pct_change(21)
+
+    # === v3 추가 지표 ===
+
+    # Donchian Channel (Quantocracy 7건 — 터틀 트레이딩)
+    df["donchian_upper"] = df["high"].rolling(window=20).max()
+    df["donchian_lower"] = df["low"].rolling(window=20).min()
+
+    # MDD (Quantocracy 125건 — 리스크 필터)
+    rolling_max = df["close"].rolling(window=60, min_periods=1).max()
+    df["mdd_60"] = (df["close"] - rolling_max) / rolling_max
+
+    # 52주 최고/최저 (Quantocracy 29건)
+    if len(df) >= 252:
+        df["high_52w"] = df["high"].rolling(window=252).max()
+        df["low_52w"] = df["low"].rolling(window=252).min()
+
+    # 연속 상승/하락 일수 (Quantocracy 7건)
+    df["daily_return"] = df["close"].pct_change()
+    consecutive = []
+    count = 0
+    for ret in df["daily_return"]:
+        if pd.notna(ret):
+            if ret > 0:
+                count = count + 1 if count > 0 else 1
+            elif ret < 0:
+                count = count - 1 if count < 0 else -1
+            else:
+                count = 0
+        consecutive.append(count)
+    df["consecutive_days"] = consecutive
+
+    # ROC (Quantocracy 276건)
+    df["roc_10"] = ta.roc(df["close"], length=10)
 
     return df
 
@@ -179,6 +212,48 @@ def score_stock(df):
             score += 8
             reasons.append(f"스토캐스틱 과매도 반등 (%K:{last['stoch_k']:.0f})")
 
+    # === v3 추가 팩터 ===
+
+    # 9. MDD 리스크 필터 (Quantocracy 125건)
+    if pd.notna(last.get("mdd_60")):
+        mdd = abs(last["mdd_60"])
+        if mdd > 0.30:
+            score -= 10
+            reasons.append(f"⚠ 60일 MDD {mdd:.0%} (고위험)")
+        elif mdd < 0.10:
+            score += 5
+            reasons.append(f"MDD 양호 ({mdd:.0%})")
+
+    # 10. 연속 패턴 (Quantocracy 7건)
+    consec = last.get("consecutive_days", 0)
+    if isinstance(consec, (int, float)) and pd.notna(consec):
+        if consec <= -3:
+            score += 6
+            reasons.append(f"3일+ 연속 하락 후 반등 기대")
+        elif consec >= 5:
+            score -= 5
+            reasons.append(f"⚠ {int(consec)}일 연속 상승 (과열)")
+
+    # 11. 52주 신고가 근접 (Quantocracy 29건)
+    if pd.notna(last.get("high_52w")):
+        dist_high = (last["high_52w"] - last["close"]) / last["high_52w"]
+        if dist_high < 0.03:
+            score += 7
+            reasons.append("52주 신고가 근접 (3% 이내)")
+
+    # 12. ROC 모멘텀 (Quantocracy 276건)
+    if pd.notna(last.get("roc_10")):
+        if 2 < last["roc_10"] < 15:
+            score += 5
+            reasons.append(f"ROC 양호 ({last['roc_10']:.1f}%)")
+
+    # 13. 거래량 급감 (경고)
+    if pd.notna(last.get("vol_ma20")) and last["vol_ma20"] > 0:
+        vol_ratio = last["volume"] / last["vol_ma20"]
+        if vol_ratio < 0.5:
+            score -= 5
+            reasons.append(f"⚠ 거래량 급감 ({vol_ratio:.0%})")
+
     return score, reasons
 
 
@@ -252,10 +327,31 @@ def check_signals(df, score, reasons):
         if last["close"] <= last["bb_lower"] and last["rsi14"] < 30:
             signals.append(("mean_reversion", f"볼린저 하단 이탈 + RSI {last['rsi14']:.0f} 과매도"))
 
-    # 듀얼모멘텀 (Quantocracy 64회 — 새 시그널)
+    # 듀얼모멘텀 (Quantocracy 64회)
     if pd.notna(last.get("mom_12m")) and pd.notna(last.get("mom_1m")):
         if last["mom_12m"] > 0.15 and last["mom_1m"] > 0 and score >= 50:
             signals.append(("dual_momentum", f"12M 수익률 {last['mom_12m']:.1%}, 1M {last['mom_1m']:.1%}, 스코어 {score}"))
+
+    # === v3 시그널 ===
+
+    # Donchian 채널 돌파 (Quantocracy 7건 — 터틀 트레이딩)
+    if pd.notna(last.get("donchian_upper")):
+        if last["close"] > last["donchian_upper"] and last["close"] > last["open"]:
+            vol_r = last["volume"] / last["vol_ma20"] * 100 if pd.notna(last.get("vol_ma20")) and last["vol_ma20"] > 0 else 0
+            if vol_r > 150:
+                signals.append(("donchian_breakout", f"20일 Donchian 상단({int(last['donchian_upper'])}) 돌파, 거래량 {vol_r:.0f}%"))
+
+    # 52주 신고가 (Quantocracy 29건)
+    if pd.notna(last.get("high_52w")):
+        dist = (last["high_52w"] - last["close"]) / last["high_52w"]
+        if dist < 0.01 and last["close"] > last["open"]:
+            signals.append(("new_high", f"52주 신고가 {int(last['high_52w'])} 근접/경신"))
+
+    # 연속 하락 후 반등 (Quantocracy 7건)
+    consec = last.get("consecutive_days", 0)
+    if isinstance(consec, (int, float)) and pd.notna(consec):
+        if df.iloc[-2].get("consecutive_days", 0) <= -3 and last["close"] > last["open"]:
+            signals.append(("bounce_after_drop", f"{abs(int(df.iloc[-2]['consecutive_days']))}일 연속 하락 후 반등 양봉"))
 
     return signals
 
@@ -276,6 +372,9 @@ def run_screener():
         "volume_spike": [],
         "mean_reversion": [],
         "dual_momentum": [],
+        "donchian_breakout": [],
+        "new_high": [],
+        "bounce_after_drop": [],
     }
 
     for i, ticker in enumerate(tickers):
