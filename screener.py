@@ -21,46 +21,85 @@ import FinanceDataReader as fdr
 LOOKBACK_DAYS = 250
 NAVER_API_DELAY = 0.1
 FRED_API_KEY = "d41ee4f2e4718a0e25f8dfabaabe3ec4"
+ECOS_API_KEY = "SA1KDIVJJYNNKZRW1K6Z"
+
+
+def get_ecos_data():
+    """ECOS API로 한국 매크로 데이터 수집"""
+    try:
+        # 원/달러 환율
+        url = f"https://ecos.bok.or.kr/api/StatisticSearch/{ECOS_API_KEY}/json/kr/1/5/731Y001/D/20260101/20261231/0000001"
+        resp = requests.get(url, timeout=10)
+        rows = resp.json().get("StatisticSearch", {}).get("row", [])
+        usd_krw = float(rows[-1]["DATA_VALUE"]) if rows else 0
+
+        # 기준금리
+        url2 = f"https://ecos.bok.or.kr/api/StatisticSearch/{ECOS_API_KEY}/json/kr/1/1/722Y001/D/20250101/20261231/0101000"
+        resp2 = requests.get(url2, timeout=10)
+        rows2 = resp2.json().get("StatisticSearch", {}).get("row", [])
+        base_rate = float(rows2[-1]["DATA_VALUE"]) if rows2 else 0
+
+        return {"usd_krw": usd_krw, "base_rate": base_rate}
+    except Exception as e:
+        print(f"ECOS API 조회 실패: {e}")
+        return {"usd_krw": 0, "base_rate": 0}
 
 
 def get_market_regime():
-    """FRED API로 시장 국면 판별 (VIX + 금리)"""
+    """FRED + ECOS로 시장 국면 판별"""
+    vix = 0
+    us10y = 0
+    usd_krw = 0
+    base_rate = 0
+
+    # FRED (미국)
     try:
         from fredapi import Fred
         fred = Fred(api_key=FRED_API_KEY)
-
-        vix = fred.get_series("VIXCLS").dropna().iloc[-1]
-        us10y = fred.get_series("DGS10").dropna().iloc[-1]
-
-        # 레짐 판별
-        if vix > 30:
-            regime = "risk_off"
-            desc = f"공포 (VIX:{vix:.1f}, 금리:{us10y:.2f}%)"
-            score_adj = 20  # 시그널 기준 엄격화
-        elif vix > 20:
-            regime = "caution"
-            desc = f"주의 (VIX:{vix:.1f}, 금리:{us10y:.2f}%)"
-            score_adj = 10
-        elif vix < 15:
-            regime = "risk_on"
-            desc = f"낙관 (VIX:{vix:.1f}, 금리:{us10y:.2f}%)"
-            score_adj = -5  # 기준 완화
-        else:
-            regime = "neutral"
-            desc = f"중립 (VIX:{vix:.1f}, 금리:{us10y:.2f}%)"
-            score_adj = 0
-
-        print(f"시장 국면: {regime} — {desc}")
-        return {
-            "regime": regime,
-            "description": desc,
-            "vix": round(float(vix), 2),
-            "us10y": round(float(us10y), 2),
-            "score_adjustment": score_adj,
-        }
+        vix = float(fred.get_series("VIXCLS").dropna().iloc[-1])
+        us10y = float(fred.get_series("DGS10").dropna().iloc[-1])
     except Exception as e:
         print(f"FRED API 조회 실패: {e}")
-        return {"regime": "unknown", "description": "매크로 데이터 없음", "vix": 0, "us10y": 0, "score_adjustment": 0}
+
+    # ECOS (한국)
+    ecos = get_ecos_data()
+    usd_krw = ecos["usd_krw"]
+    base_rate = ecos["base_rate"]
+
+    # 레짐 판별
+    if vix > 30:
+        regime = "risk_off"
+        desc = f"공포 (VIX:{vix:.1f})"
+        score_adj = 20
+    elif vix > 20:
+        regime = "caution"
+        desc = f"주의 (VIX:{vix:.1f})"
+        score_adj = 10
+    elif vix < 15:
+        regime = "risk_on"
+        desc = f"낙관 (VIX:{vix:.1f})"
+        score_adj = -5
+    else:
+        regime = "neutral"
+        desc = f"중립 (VIX:{vix:.1f})"
+        score_adj = 0
+
+    # 환율 방향 (수출주/내수주 가중 참고)
+    fx_direction = "원화약세" if usd_krw > 1400 else "원화강세" if usd_krw < 1200 else "보통"
+
+    print(f"시장 국면: {regime} — {desc}")
+    print(f"  VIX: {vix:.1f}, US10Y: {us10y:.2f}%, 원/달러: {usd_krw:.1f}, 기준금리: {base_rate}%, 환율방향: {fx_direction}")
+
+    return {
+        "regime": regime,
+        "description": desc,
+        "vix": round(vix, 2),
+        "us10y": round(us10y, 2),
+        "usd_krw": round(usd_krw, 1),
+        "base_rate": base_rate,
+        "fx_direction": fx_direction,
+        "score_adjustment": score_adj,
+    }
 
 
 def get_fundamental_data(code):
