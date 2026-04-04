@@ -73,23 +73,51 @@ def get_market_regime():
     usd_krw = korea["usd_krw"]
     base_rate = korea["base_rate"]
 
-    # 레짐 판별
+    # 복합 레짐 판별 (VIX + US10Y + 환율)
+    risk_score = 0
+    risk_factors = []
+
+    # VIX 기반
     if vix > 30:
-        regime = "risk_off"
-        desc = f"공포 (VIX:{vix:.1f})"
-        score_adj = 20
+        risk_score += 3
+        risk_factors.append(f"VIX {vix:.1f} 공포")
+    elif vix > 25:
+        risk_score += 2
+        risk_factors.append(f"VIX {vix:.1f} 경계")
     elif vix > 20:
+        risk_score += 1
+        risk_factors.append(f"VIX {vix:.1f} 주의")
+
+    # US10Y 기반 (금리 부담)
+    if us10y > 5.0:
+        risk_score += 2
+        risk_factors.append(f"US10Y {us10y:.1f}% 고금리")
+    elif us10y > 4.5:
+        risk_score += 1
+        risk_factors.append(f"US10Y {us10y:.1f}% 금리부담")
+
+    # 환율 기반 (외국인 매도 압력)
+    if usd_krw > 1450:
+        risk_score += 2
+        risk_factors.append(f"원/달러 {usd_krw:.0f} 급등")
+    elif usd_krw > 1350:
+        risk_score += 1
+        risk_factors.append(f"원/달러 {usd_krw:.0f} 약세")
+
+    if risk_score >= 5:
+        regime = "risk_off"
+        score_adj = 20
+    elif risk_score >= 3:
         regime = "caution"
-        desc = f"주의 (VIX:{vix:.1f})"
         score_adj = 10
-    elif vix < 15:
+    elif risk_score == 0:
         regime = "risk_on"
-        desc = f"낙관 (VIX:{vix:.1f})"
         score_adj = -5
     else:
         regime = "neutral"
-        desc = f"중립 (VIX:{vix:.1f})"
         score_adj = 0
+
+    desc = f"{regime} (위험점수:{risk_score}/7, {', '.join(risk_factors) if risk_factors else '안정'})"
 
     # 환율 방향 (수출주/내수주 가중 참고)
     fx_direction = "원화약세" if usd_krw > 1400 else "원화강세" if usd_krw < 1200 else "보통"
@@ -166,6 +194,26 @@ def calc_attention_surge(code, current_rate, history):
         return 0, 0
     ratio = round(current_rate / avg, 1)
     return ratio, round(avg, 1)
+
+
+NEGATIVE_KEYWORDS = ["유상증자", "전환사채", "신주인수권", "감자", "상장폐지", "관리종목", "횡령", "배임", "분식"]
+
+
+def check_negative_disclosure(code):
+    """네이버 금융 공시에서 최근 네거티브 키워드 체크"""
+    try:
+        from bs4 import BeautifulSoup
+        url = f"https://finance.naver.com/item/news.naver?code={code}"
+        resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=5)
+        soup = BeautifulSoup(resp.text, "html.parser")
+        titles = [a.get_text(strip=True) for a in soup.select("td.title a")][:10]
+        for title in titles:
+            for kw in NEGATIVE_KEYWORDS:
+                if kw in title:
+                    return True, title
+    except Exception:
+        pass
+    return False, ""
 
 
 def get_fundamental_data(code):
@@ -476,23 +524,43 @@ def score_stock(df, fundamental=None, attention=0):
             score -= 8
             reasons.append("⚠ EPS 적자")
 
-    # 19. 관심도 (참고 표시만, 점수 미반영)
+    # 19. 관심도 + 시그널 동시 발생 가산
+    if isinstance(attention, tuple):
+        surge_ratio, avg_rate = attention
+        if surge_ratio >= 3:
+            score += 5
+            reasons.append(f"관심급증 {surge_ratio}배 + 시그널 동시")
+
+    # 20. 네거티브 공시 감점
+    neg_flag = fund.get("_negative_disclosure")
+    if neg_flag:
+        score -= 15
+        reasons.append(f"⚠ 네거티브 공시: {fund.get('_negative_title', '')[:20]}")
 
     return score, reasons
 
 
 def calc_atr_targets(df):
-    """ATR 기반 진입/손절/목표 (Quantocracy 94회 — 가장 검증된 리스크 관리)"""
+    """ATR 기반 진입/손절/목표 (ADX 강도에 따라 배수 가변)"""
     last = df.iloc[-1]
     atr = last.get("atr14", 0)
+    adx = last.get("adx", 0)
     close = last["close"]
 
     if not pd.notna(atr) or atr == 0:
         return int(close), int(close * 0.95), int(close * 1.10)
 
+    # ADX 기반 배수 가변: 강한 추세일수록 넓게
+    if pd.notna(adx) and adx > 40:
+        sl_mult, tp_mult = 1.5, 3.5  # 강한 추세: 좁은 손절, 넓은 목표 (1:2.3)
+    elif pd.notna(adx) and adx > 25:
+        sl_mult, tp_mult = 2.0, 3.0  # 보통 추세 (1:1.5)
+    else:
+        sl_mult, tp_mult = 2.5, 2.5  # 횡보: 넓은 손절, 좁은 목표 (1:1.0)
+
     entry = int(close)
-    stop_loss = int(close - 2 * atr)    # 2 ATR 손절
-    target = int(close + 3 * atr)       # 3 ATR 목표 (손익비 1.5:1)
+    stop_loss = int(close - sl_mult * atr)
+    target = int(close + tp_mult * atr)
 
     return entry, stop_loss, target
 
@@ -679,10 +747,17 @@ def run_screener():
         if not stock_signals:
             continue
 
-        # 시그널 발생 종목만 펀더멘탈 + 관심도 수집 (API 호출 절약)
+        # 시그널 발생 종목만 펀더멘탈 + 관심도 + 공시 수집 (API 호출 절약)
         fund = get_fundamental_data(code)
         time.sleep(NAVER_API_DELAY)
         current_rate = get_naver_attention(code)
+        time.sleep(NAVER_API_DELAY)
+
+        # 네거티브 공시 체크
+        neg_flag, neg_title = check_negative_disclosure(code)
+        if neg_flag:
+            fund["_negative_disclosure"] = True
+            fund["_negative_title"] = neg_title
         time.sleep(NAVER_API_DELAY)
 
         # 히스토리 대비 급증 판단
@@ -722,6 +797,8 @@ def run_screener():
                 "attention": current_rate,
                 "attention_surge": surge_ratio,
                 "attention_flag": surge_ratio >= 3,
+                "negative_disclosure": neg_flag,
+                "negative_title": neg_title if neg_flag else "",
                 # pandas-ta 기술적 지표 (팩트 데이터)
                 "rsi14": round(float(last.get("rsi14", 0) or 0), 1),
                 "macd_line": round(float(last.get("macd_line", 0) or 0), 1),
