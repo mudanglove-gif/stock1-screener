@@ -24,25 +24,32 @@ FRED_API_KEY = "d41ee4f2e4718a0e25f8dfabaabe3ec4"
 ECOS_API_KEY = "SA1KDIVJJYNNKZRW1K6Z"
 
 
-def get_ecos_data():
-    """ECOS API로 한국 매크로 데이터 수집"""
-    try:
-        # 원/달러 환율
-        url = f"https://ecos.bok.or.kr/api/StatisticSearch/{ECOS_API_KEY}/json/kr/1/5/731Y001/D/20260101/20261231/0000001"
-        resp = requests.get(url, timeout=10)
-        rows = resp.json().get("StatisticSearch", {}).get("row", [])
-        usd_krw = float(rows[-1]["DATA_VALUE"]) if rows else 0
+def get_korea_macro():
+    """네이버 금융 + ECOS로 한국 매크로 데이터 수집"""
+    usd_krw = 0
+    base_rate = 0
 
-        # 기준금리
+    # 1. 원/달러 환율: 네이버 금융 (실시간)
+    try:
+        from bs4 import BeautifulSoup
+        url = "https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_USDKRW"
+        resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+        soup = BeautifulSoup(resp.text, "html.parser")
+        rate_text = soup.select_one(".no_today").get_text(strip=True)
+        usd_krw = float(rate_text.replace("원", "").replace(",", "").strip())
+    except Exception as e:
+        print(f"네이버 환율 조회 실패: {e}")
+
+    # 2. 기준금리: ECOS API (지연 허용)
+    try:
         url2 = f"https://ecos.bok.or.kr/api/StatisticSearch/{ECOS_API_KEY}/json/kr/1/1/722Y001/D/20250101/20261231/0101000"
         resp2 = requests.get(url2, timeout=10)
         rows2 = resp2.json().get("StatisticSearch", {}).get("row", [])
         base_rate = float(rows2[-1]["DATA_VALUE"]) if rows2 else 0
-
-        return {"usd_krw": usd_krw, "base_rate": base_rate}
     except Exception as e:
-        print(f"ECOS API 조회 실패: {e}")
-        return {"usd_krw": 0, "base_rate": 0}
+        print(f"ECOS 기준금리 조회 실패: {e}")
+
+    return {"usd_krw": usd_krw, "base_rate": base_rate}
 
 
 def get_market_regime():
@@ -61,10 +68,10 @@ def get_market_regime():
     except Exception as e:
         print(f"FRED API 조회 실패: {e}")
 
-    # ECOS (한국)
-    ecos = get_ecos_data()
-    usd_krw = ecos["usd_krw"]
-    base_rate = ecos["base_rate"]
+    # 한국 매크로 (네이버 환율 + ECOS 기준금리)
+    korea = get_korea_macro()
+    usd_krw = korea["usd_krw"]
+    base_rate = korea["base_rate"]
 
     # 레짐 판별
     if vix > 30:
@@ -663,6 +670,8 @@ def run_screener():
         if df is None:
             continue
 
+        last = df.iloc[-1]  # 지표 계산 후 재할당
+
         # 기본 스코어 (기술적)
         score, reasons = score_stock(df)
         stock_signals = check_signals(df, score, reasons)
@@ -713,6 +722,30 @@ def run_screener():
                 "attention": current_rate,
                 "attention_surge": surge_ratio,
                 "attention_flag": surge_ratio >= 3,
+                # pandas-ta 기술적 지표 (팩트 데이터)
+                "rsi14": round(float(last.get("rsi14", 0) or 0), 1),
+                "macd_line": round(float(last.get("macd_line", 0) or 0), 1),
+                "macd_signal": round(float(last.get("macd_signal", 0) or 0), 1),
+                "macd_hist": round(float(last.get("macd_hist", 0) or 0), 1),
+                "bb_upper": int(last.get("bb_upper", 0) or 0),
+                "bb_mid": int(last.get("bb_mid", 0) or 0),
+                "bb_lower": int(last.get("bb_lower", 0) or 0),
+                "atr14": round(float(last.get("atr14", 0) or 0), 1),
+                "adx": round(float(last.get("adx", 0) or 0), 1),
+                "stoch_k": round(float(last.get("stoch_k", 0) or 0), 1),
+                "stoch_d": round(float(last.get("stoch_d", 0) or 0), 1),
+                "obv": int(last.get("obv", 0) or 0),
+                "ma5": int(last.get("ma5", 0) or 0),
+                "ma20": int(last.get("ma20", 0) or 0),
+                "ma60": int(last.get("ma60", 0) or 0),
+                "ma120": int(last.get("ma120", 0) or 0),
+                "ma200": int(last.get("ma200", 0) or 0),
+                "donchian_upper": int(last.get("donchian_upper", 0) or 0),
+                "donchian_lower": int(last.get("donchian_lower", 0) or 0),
+                "mdd_60": round(float(last.get("mdd_60", 0) or 0) * 100, 1),
+                "high_52w": int(last.get("high_52w", 0) or 0),
+                "low_52w": int(last.get("low_52w", 0) or 0),
+                "consecutive_days": int(last.get("consecutive", 0) or 0),
             })
 
     # 매크로 기준 적용: risk_off 시 최소 스코어 상향
