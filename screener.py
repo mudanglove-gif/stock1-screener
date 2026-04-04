@@ -138,6 +138,7 @@ def get_market_regime():
 
 
 ATTENTION_HISTORY_PATH = os.path.join(os.path.dirname(__file__), "docs", "attention_history.json")
+PERFORMANCE_PATH = os.path.join(os.path.dirname(__file__), "docs", "performance.json")
 
 
 def load_attention_history():
@@ -690,6 +691,15 @@ def get_related_articles():
 
 
 def run_screener():
+    # 전일 추천 종목 성과 추적 (스크리너 시작 전)
+    try:
+        from performance_tracker import track_performance
+        print("=== 성과 추적 ===")
+        track_performance()
+        print()
+    except Exception as e:
+        print(f"성과 추적 실패 (계속 진행): {e}\n")
+
     end = datetime.now()
     start = end - timedelta(days=LOOKBACK_DAYS)
     start_str = start.strftime("%Y%m%d")
@@ -851,6 +861,14 @@ def run_screener():
     # Quantocracy 관련 글 매칭
     related_articles = get_related_articles()
 
+    # 성과 데이터 로드
+    perf_summary = {}
+    try:
+        with open(PERFORMANCE_PATH, "r", encoding="utf-8") as f:
+            perf_summary = json.load(f).get("summary", {})
+    except Exception:
+        pass
+
     result = {
         "updated": datetime.now().isoformat(),
         "total_scanned": len(tickers),
@@ -859,6 +877,7 @@ def run_screener():
         "day_trade": day_trade,
         "related_articles": related_articles,
         "summary": {k: len(v) for k, v in signals.items()},
+        "performance": perf_summary,
     }
 
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
