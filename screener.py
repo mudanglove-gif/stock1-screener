@@ -719,6 +719,8 @@ def run_screener():
         "bounce_after_drop": [],
     }
 
+    day_trade_candidates = []  # 단타 모듈용 데이터 수집
+
     for i, ticker in enumerate(tickers):
         code = ticker["code"]
         name = ticker["name"]
@@ -825,6 +827,12 @@ def run_screener():
                 "consecutive_days": int(last.get("consecutive", 0) or 0),
             })
 
+        # 단타 모듈용 데이터 수집
+        day_trade_candidates.append({
+            "stock": {"code": code, "name": name, "attention_flag": surge_ratio >= 3, "swing_signals": [s[0] for s in stock_signals]},
+            "df": df,
+        })
+
     # 매크로 기준 적용: risk_off 시 최소 스코어 상향
     min_score = score_threshold  # VIX>30: 20점 이상만, VIX<15: -5(= 거의 모두 통과)
     for key in signals:
@@ -834,6 +842,12 @@ def run_screener():
     # 관심도 히스토리 저장
     save_attention_history(att_history)
 
+    # 단타 모듈 실행
+    day_trade = run_day_trade_module(day_trade_candidates, macro)
+    print(f"\n단타 시그널:")
+    print(f"  장초반 공략: {len(day_trade['day_open_attack'])}개")
+    print(f"  눌림 진입: {len(day_trade['day_pullback_entry'])}개")
+
     # Quantocracy 관련 글 매칭
     related_articles = get_related_articles()
 
@@ -842,6 +856,7 @@ def run_screener():
         "total_scanned": len(tickers),
         "market_regime": macro,
         "signals": signals,
+        "day_trade": day_trade,
         "related_articles": related_articles,
         "summary": {k: len(v) for k, v in signals.items()},
     }
@@ -853,6 +868,299 @@ def run_screener():
     print(f"\n완료! 결과: {OUTPUT_PATH}")
     for k, v in result["summary"].items():
         print(f"  {k}: {v}개")
+
+
+###############################################################################
+# 단타 모듈 — "내일의 단타"
+###############################################################################
+
+DAY_TRADE_EXCLUDED = ["스팩", "리츠", "SPAC"]
+
+
+def day_trade_common_filter(stock, df):
+    """공통 필터: 통과하면 True"""
+    last = df.iloc[-1]
+    close = last["close"]
+    vol = last["volume"]
+
+    # 거래대금 30억 이상
+    trade_value = close * vol
+    if trade_value < 3_000_000_000:
+        return False
+
+    # 연속 상승 5일 초과 제외
+    consec = int(last.get("consecutive", 0) or 0)
+    if consec > 5:
+        return False
+
+    # 상한가/하한가 제외 (변동 ±28% 이상)
+    if len(df) >= 2:
+        prev_close = df.iloc[-2]["close"]
+        change_pct = abs(close - prev_close) / prev_close * 100 if prev_close > 0 else 0
+        if change_pct > 28:
+            return False
+
+    # 종목명 필터
+    name = stock.get("name", "")
+    for kw in DAY_TRADE_EXCLUDED:
+        if kw in name:
+            return False
+
+    return True
+
+
+def day_trade_disqualifiers(df):
+    """실격 사유 체크"""
+    disq = []
+    last = df.iloc[-1]
+
+    if len(df) >= 2:
+        prev = df.iloc[-2]
+        prev_change = (prev["close"] - df.iloc[-3]["close"]) / df.iloc[-3]["close"] * 100 if len(df) >= 3 else 0
+        # 급등 후 음봉
+        if prev_change > 5 and last["close"] < last["open"]:
+            disq.append("post_surge_reversal")
+        # 거래량 급감 + 음봉
+        if last["volume"] < prev["volume"] * 0.5 and last["close"] < last["open"]:
+            disq.append("volume_dry_up")
+
+    # 이상 급등 (±15%)
+    if len(df) >= 2:
+        change = abs(last["close"] - df.iloc[-2]["close"]) / df.iloc[-2]["close"] * 100
+        if change > 15:
+            disq.append("extreme_move")
+
+    return disq
+
+
+def score_day_open_attack(df):
+    """장초반 공략 스코어링 (100점 만점)"""
+    last = df.iloc[-1]
+    score = 0
+    breakdown = {"momentum": 0, "volume": 0, "trend": 0, "volatility": 0}
+
+    o, h, l, c = last["open"], last["high"], last["low"], last["close"]
+    rng = h - l if h > l else 1
+
+    # 모멘텀 (35)
+    body_pct = (c - o) / o * 100 if o > 0 else 0
+    if body_pct > 2:
+        breakdown["momentum"] += 10
+    if body_pct > 4:
+        breakdown["momentum"] += 5
+    if rng > 0 and (c - l) / rng > 0.75:  # 종가 상위 25%
+        breakdown["momentum"] += 10
+    macd_h = last.get("macd_hist", 0) or 0
+    if len(df) >= 2:
+        prev_macd_h = df.iloc[-2].get("macd_hist", 0) or 0
+        if pd.notna(macd_h) and macd_h > 0 and macd_h > prev_macd_h:
+            breakdown["momentum"] += 10
+
+    # 거래량 (25)
+    vol_ma20 = last.get("vol_ma20", 0) or 0
+    if pd.notna(vol_ma20) and vol_ma20 > 0:
+        vol_ratio = last["volume"] / vol_ma20
+        if vol_ratio >= 2:
+            breakdown["volume"] += 10
+        if vol_ratio >= 3:
+            breakdown["volume"] += 5
+    trade_value = c * last["volume"]
+    if trade_value >= 5_000_000_000:
+        breakdown["volume"] += 5
+    obv_rising = True
+    if len(df) >= 5:
+        for i in range(-5, -1):
+            if (df.iloc[i].get("obv", 0) or 0) > (df.iloc[i + 1].get("obv", 0) or 0):
+                obv_rising = False
+                break
+        if obv_rising:
+            breakdown["volume"] += 5
+
+    # 추세 (20)
+    ma5 = last.get("ma5", 0) or 0
+    ma20 = last.get("ma20", 0) or 0
+    if pd.notna(ma5) and pd.notna(ma20) and c > ma5 > ma20:
+        breakdown["trend"] += 10
+    adx = last.get("adx", 0) or 0
+    if pd.notna(adx):
+        if adx > 25:
+            breakdown["trend"] += 5
+        if adx > 40:
+            breakdown["trend"] += 5
+
+    # 변동성 (20)
+    atr = last.get("atr14", 0) or 0
+    if pd.notna(atr) and atr > 0 and rng < atr * 0.8:
+        breakdown["volatility"] += 10
+    bb_upper = last.get("bb_upper", 0) or 0
+    bb_lower = last.get("bb_lower", 0) or 0
+    if pd.notna(bb_upper) and pd.notna(bb_lower) and bb_upper > bb_lower:
+        bb_width = (bb_upper - bb_lower) / ((bb_upper + bb_lower) / 2) * 100
+        if bb_width < 5:  # 스퀴즈
+            breakdown["volatility"] += 5
+    if len(df) >= 2:
+        gap_pct = abs(o - df.iloc[-2]["close"]) / df.iloc[-2]["close"] * 100
+        if gap_pct < 0.5:
+            breakdown["volatility"] += 5
+
+    score = sum(breakdown.values())
+    return score, breakdown
+
+
+def score_day_pullback_entry(df):
+    """눌림 진입 스코어링 (100점 만점)"""
+    last = df.iloc[-1]
+    score = 0
+    breakdown = {"trend": 0, "pullback": 0, "volume": 0, "volatility": 0}
+
+    o, h, l, c = last["open"], last["high"], last["low"], last["close"]
+    body = abs(c - o) if abs(c - o) > 0 else 1
+
+    # 추세 건전성 (35)
+    ma5 = last.get("ma5", 0) or 0
+    ma20 = last.get("ma20", 0) or 0
+    ma60 = last.get("ma60", 0) or 0
+    if pd.notna(ma5) and pd.notna(ma20) and pd.notna(ma60) and ma5 > ma20 > ma60:
+        breakdown["trend"] += 15
+    rsi = last.get("rsi14", 0) or 0
+    if pd.notna(rsi) and 45 <= rsi <= 65:
+        breakdown["trend"] += 10
+    consec = int(last.get("consecutive", 0) or 0)
+    if 2 <= consec <= 4:
+        breakdown["trend"] += 10
+
+    # 눌림 시그널 (30)
+    upper_shadow = h - max(o, c)
+    if upper_shadow > body * 0.5:
+        breakdown["pullback"] += 10
+    if pd.notna(ma5) and ma5 > 0:
+        dist_ma5 = (c - ma5) / ma5 * 100
+        if -1 <= dist_ma5 <= 1:
+            breakdown["pullback"] += 10
+    stoch_k = last.get("stoch_k", 0) or 0
+    if pd.notna(stoch_k) and 50 <= stoch_k <= 80:
+        breakdown["pullback"] += 10
+
+    # 거래량 (20)
+    if len(df) >= 2:
+        prev_vol = df.iloc[-2]["volume"]
+        if prev_vol > 0 and last["volume"] < prev_vol * 0.7:
+            breakdown["volume"] += 10
+    trade_value = c * last["volume"]
+    if trade_value >= 5_000_000_000:
+        breakdown["volume"] += 5
+    obv = last.get("obv", 0) or 0
+    if len(df) >= 2:
+        prev_obv = df.iloc[-2].get("obv", 0) or 0
+        if pd.notna(obv) and pd.notna(prev_obv) and obv >= prev_obv:
+            breakdown["volume"] += 5
+
+    # 변동성 (15)
+    atr = last.get("atr14", 0) or 0
+    if pd.notna(atr) and c > 0 and atr / c > 0.015:
+        breakdown["volatility"] += 10
+    bb_mid = last.get("bb_mid", 0) or 0
+    bb_upper = last.get("bb_upper", 0) or 0
+    if pd.notna(bb_mid) and pd.notna(bb_upper) and c > bb_mid and c < bb_upper:
+        breakdown["volatility"] += 5
+
+    score = sum(breakdown.values())
+    return score, breakdown
+
+
+def run_day_trade_module(all_stock_data, macro):
+    """단타 모듈: 기존 시그널 종목 풀에서 단타 적합 종목 선별"""
+    # risk_off 시 단타 미생성
+    if macro.get("regime") == "risk_off":
+        return {"day_open_attack": [], "day_pullback_entry": [], "generated_at": datetime.now().isoformat(), "macro_regime": macro.get("regime", "")}
+
+    open_attack = []
+    pullback_entry = []
+
+    for stock_info in all_stock_data:
+        stock = stock_info["stock"]
+        df = stock_info["df"]
+
+        if not day_trade_common_filter(stock, df):
+            continue
+
+        disq = day_trade_disqualifiers(df)
+        if disq:
+            continue
+
+        last = df.iloc[-1]
+        atr = float(last.get("atr14", 0) or 0)
+        close = int(last["close"])
+
+        # 장초반 공략
+        oa_score, oa_breakdown = score_day_open_attack(df)
+        if oa_score >= 60:
+            sl = int(close - 1.5 * atr) if atr > 0 else int(close * 0.98)
+            tp = int(close + 2.0 * atr) if atr > 0 else int(close * 1.03)
+            open_attack.append({
+                "code": stock["code"],
+                "name": stock["name"],
+                "close": close,
+                "day_trade_score": oa_score,
+                "score_breakdown": oa_breakdown,
+                "entry_guide": {
+                    "timing": "09:00~09:30",
+                    "entry": close,
+                    "stop_loss": sl,
+                    "target": tp,
+                    "risk_reward": "1:1.33",
+                    "atr14": round(atr, 1),
+                },
+                "swing_signals": stock.get("swing_signals", []),
+                "confidence": "강한" if oa_score >= 80 else "보통" if oa_score >= 70 else "약한",
+                "attention_flag": stock.get("attention_flag", False),
+            })
+
+        # 눌림 진입
+        pe_score, pe_breakdown = score_day_pullback_entry(df)
+        if pe_score >= 55:
+            sl = int(close - 1.5 * atr) if atr > 0 else int(close * 0.98)
+            tp = int(close + 2.0 * atr) if atr > 0 else int(close * 1.03)
+            pullback_entry.append({
+                "code": stock["code"],
+                "name": stock["name"],
+                "close": close,
+                "day_trade_score": pe_score,
+                "score_breakdown": pe_breakdown,
+                "entry_guide": {
+                    "timing": "09:30~10:00",
+                    "entry": close,
+                    "stop_loss": sl,
+                    "target": tp,
+                    "risk_reward": "1:1.33",
+                    "atr14": round(atr, 1),
+                },
+                "swing_signals": stock.get("swing_signals", []),
+                "confidence": "강한" if pe_score >= 80 else "보통" if pe_score >= 70 else "약한",
+                "attention_flag": stock.get("attention_flag", False),
+            })
+
+    # 중복 제거: 양쪽 모두 3위 이내 → 스코어 높은 쪽 배정
+    open_attack = sorted(open_attack, key=lambda x: x["day_trade_score"], reverse=True)
+    pullback_entry = sorted(pullback_entry, key=lambda x: x["day_trade_score"], reverse=True)
+
+    oa_codes = {s["code"] for s in open_attack[:3]}
+    pe_codes = {s["code"] for s in pullback_entry[:3]}
+    overlap = oa_codes & pe_codes
+    for code in overlap:
+        oa_item = next(s for s in open_attack if s["code"] == code)
+        pe_item = next(s for s in pullback_entry if s["code"] == code)
+        if oa_item["day_trade_score"] >= pe_item["day_trade_score"]:
+            pullback_entry = [s for s in pullback_entry if s["code"] != code]
+        else:
+            open_attack = [s for s in open_attack if s["code"] != code]
+
+    return {
+        "generated_at": datetime.now().isoformat(),
+        "macro_regime": macro.get("regime", ""),
+        "day_open_attack": open_attack[:3],
+        "day_pullback_entry": pullback_entry[:3],
+    }
 
 
 if __name__ == "__main__":
