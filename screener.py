@@ -19,7 +19,48 @@ import requests
 import FinanceDataReader as fdr
 
 LOOKBACK_DAYS = 250
-NAVER_API_DELAY = 0.1  # 네이버 API 호출 간 딜레이
+NAVER_API_DELAY = 0.1
+FRED_API_KEY = "d41ee4f2e4718a0e25f8dfabaabe3ec4"
+
+
+def get_market_regime():
+    """FRED API로 시장 국면 판별 (VIX + 금리)"""
+    try:
+        from fredapi import Fred
+        fred = Fred(api_key=FRED_API_KEY)
+
+        vix = fred.get_series("VIXCLS").dropna().iloc[-1]
+        us10y = fred.get_series("DGS10").dropna().iloc[-1]
+
+        # 레짐 판별
+        if vix > 30:
+            regime = "risk_off"
+            desc = f"공포 (VIX:{vix:.1f}, 금리:{us10y:.2f}%)"
+            score_adj = 20  # 시그널 기준 엄격화
+        elif vix > 20:
+            regime = "caution"
+            desc = f"주의 (VIX:{vix:.1f}, 금리:{us10y:.2f}%)"
+            score_adj = 10
+        elif vix < 15:
+            regime = "risk_on"
+            desc = f"낙관 (VIX:{vix:.1f}, 금리:{us10y:.2f}%)"
+            score_adj = -5  # 기준 완화
+        else:
+            regime = "neutral"
+            desc = f"중립 (VIX:{vix:.1f}, 금리:{us10y:.2f}%)"
+            score_adj = 0
+
+        print(f"시장 국면: {regime} — {desc}")
+        return {
+            "regime": regime,
+            "description": desc,
+            "vix": round(float(vix), 2),
+            "us10y": round(float(us10y), 2),
+            "score_adjustment": score_adj,
+        }
+    except Exception as e:
+        print(f"FRED API 조회 실패: {e}")
+        return {"regime": "unknown", "description": "매크로 데이터 없음", "vix": 0, "us10y": 0, "score_adjustment": 0}
 
 
 def get_fundamental_data(code):
@@ -479,6 +520,10 @@ def run_screener():
     start_str = start.strftime("%Y%m%d")
     end_str = end.strftime("%Y%m%d")
 
+    # 매크로 레짐 판별
+    macro = get_market_regime()
+    score_threshold = macro["score_adjustment"]  # 시그널 기준 조정값
+
     tickers = get_all_tickers()
 
     signals = {
@@ -552,8 +597,10 @@ def run_screener():
                 "eps": fund.get("eps"),
             })
 
-    # 스코어 기준 정렬 + 상위 20개
+    # 매크로 기준 적용: risk_off 시 최소 스코어 상향
+    min_score = score_threshold  # VIX>30: 20점 이상만, VIX<15: -5(= 거의 모두 통과)
     for key in signals:
+        signals[key] = [s for s in signals[key] if s["score"] >= min_score]
         signals[key] = sorted(signals[key], key=lambda x: x["score"], reverse=True)[:20]
 
     # Quantocracy 관련 글 매칭
@@ -562,6 +609,7 @@ def run_screener():
     result = {
         "updated": datetime.now().isoformat(),
         "total_scanned": len(tickers),
+        "market_regime": macro,
         "signals": signals,
         "related_articles": related_articles,
         "summary": {k: len(v) for k, v in signals.items()},
