@@ -87,7 +87,7 @@ def get_market_regime():
     # 환율 방향 (수출주/내수주 가중 참고)
     fx_direction = "원화약세" if usd_krw > 1400 else "원화강세" if usd_krw < 1200 else "보통"
 
-    print(f"시장 국면: {regime} — {desc}")
+    print(f"시장 국면: {regime} - {desc}")
     print(f"  VIX: {vix:.1f}, US10Y: {us10y:.2f}%, 원/달러: {usd_krw:.1f}, 기준금리: {base_rate}%, 환율방향: {fx_direction}")
 
     return {
@@ -100,6 +100,65 @@ def get_market_regime():
         "fx_direction": fx_direction,
         "score_adjustment": score_adj,
     }
+
+
+ATTENTION_HISTORY_PATH = os.path.join(os.path.dirname(__file__), "docs", "attention_history.json")
+
+
+def load_attention_history():
+    """히스토리 파일 로드 (없으면 빈 dict)"""
+    try:
+        with open(ATTENTION_HISTORY_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def save_attention_history(history):
+    """히스토리 파일 저장 (최근 20거래일만 유지)"""
+    for code in history:
+        history[code] = history[code][-20:]
+    with open(ATTENTION_HISTORY_PATH, "w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False)
+
+
+def get_naver_attention(code):
+    """네이버 종목토론방 page=1 스냅샷으로 관심도(posts_per_hour) 측정"""
+    try:
+        url = f"https://finance.naver.com/item/board.naver?code={code}&page=1"
+        resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=5)
+        if resp.status_code != 200:
+            return 0
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(resp.text, "html.parser")
+        dates = []
+        for span in soup.select("span.tah.p10.gray03"):
+            text = span.get_text(strip=True)
+            try:
+                dt = datetime.strptime(text, "%Y.%m.%d %H:%M")
+                dates.append(dt)
+            except ValueError:
+                continue
+        if len(dates) < 2:
+            return 0
+        newest = max(dates)
+        oldest = min(dates)
+        hours_diff = max((newest - oldest).total_seconds() / 3600, 0.01)
+        return round(len(dates) / hours_diff, 1)
+    except Exception:
+        return 0
+
+
+def calc_attention_surge(code, current_rate, history):
+    """히스토리 대비 급증 비율 계산. 5거래일 평균 대비 배수 반환"""
+    records = history.get(code, [])
+    if len(records) < 3:
+        return 0, 0  # 히스토리 부족 → 판단 보류
+    avg = sum(r["rate"] for r in records) / len(records)
+    if avg < 0.01:
+        return 0, 0
+    ratio = round(current_rate / avg, 1)
+    return ratio, round(avg, 1)
 
 
 def get_fundamental_data(code):
@@ -253,7 +312,7 @@ def calc_indicators(df):
     return df
 
 
-def score_stock(df, fundamental=None):
+def score_stock(df, fundamental=None, attention=0):
     """복합 스코어링 (기술 40% + 수급 30% + 펀더멘탈 20% + 매크로 10%)"""
     if df is None or len(df) < MIN_DAYS:
         return 0, []
@@ -410,6 +469,8 @@ def score_stock(df, fundamental=None):
             score -= 8
             reasons.append("⚠ EPS 적자")
 
+    # 19. 관심도 (참고 표시만, 점수 미반영)
+
     return score, reasons
 
 
@@ -559,9 +620,14 @@ def run_screener():
     start_str = start.strftime("%Y%m%d")
     end_str = end.strftime("%Y%m%d")
 
+    today_str = end.strftime("%Y-%m-%d")
+
     # 매크로 레짐 판별
     macro = get_market_regime()
     score_threshold = macro["score_adjustment"]  # 시그널 기준 조정값
+
+    # 관심도 히스토리 로드
+    att_history = load_attention_history()
 
     tickers = get_all_tickers()
 
@@ -604,11 +670,21 @@ def run_screener():
         if not stock_signals:
             continue
 
-        # 시그널 발생 종목만 펀더멘탈 데이터 수집 (API 호출 절약)
+        # 시그널 발생 종목만 펀더멘탈 + 관심도 수집 (API 호출 절약)
         fund = get_fundamental_data(code)
-        if fund:
-            score, reasons = score_stock(df, fund)
-            time.sleep(NAVER_API_DELAY)
+        time.sleep(NAVER_API_DELAY)
+        current_rate = get_naver_attention(code)
+        time.sleep(NAVER_API_DELAY)
+
+        # 히스토리 대비 급증 판단
+        surge_ratio, avg_rate = calc_attention_surge(code, current_rate, att_history)
+        score, reasons = score_stock(df, fund, (surge_ratio, avg_rate))
+
+        # 히스토리에 오늘 데이터 기록
+        if current_rate > 0:
+            if code not in att_history:
+                att_history[code] = []
+            att_history[code].append({"date": today_str, "rate": current_rate})
 
         entry, stop_loss, target = calc_atr_targets(df)
 
@@ -634,6 +710,9 @@ def run_screener():
                 "foreign_ratio": fund.get("foreign_ratio"),
                 "dividend_yield": fund.get("dividend_yield"),
                 "eps": fund.get("eps"),
+                "attention": current_rate,
+                "attention_surge": surge_ratio,
+                "attention_flag": surge_ratio >= 3,
             })
 
     # 매크로 기준 적용: risk_off 시 최소 스코어 상향
@@ -641,6 +720,9 @@ def run_screener():
     for key in signals:
         signals[key] = [s for s in signals[key] if s["score"] >= min_score]
         signals[key] = sorted(signals[key], key=lambda x: x["score"], reverse=True)[:20]
+
+    # 관심도 히스토리 저장
+    save_attention_history(att_history)
 
     # Quantocracy 관련 글 매칭
     related_articles = get_related_articles()

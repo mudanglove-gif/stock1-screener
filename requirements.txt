@@ -3,3 +3,5 @@ pandas-ta
 pandas
 numpy
 fredapi
+requests
+beautifulsoup4
