@@ -1111,11 +1111,64 @@ def run_day_trade_module(all_stock_data, macro):
         atr = float(last.get("atr14", 0) or 0)
         close = int(last["close"])
 
-        # 장초반 공략
+        # v4b 필터: ADX 최소 추세
+        adx_val = float(last.get("adx", 0) or 0)
+        if pd.notna(adx_val) and adx_val < 15:
+            continue
+
+        # v4b 필터: 정배열 필수 (MA5>MA20>MA60)
+        ma5 = last.get("ma5", 0) or 0
+        ma20 = last.get("ma20", 0) or 0
+        ma60 = last.get("ma60", 0) or 0
+        if not (pd.notna(ma5) and pd.notna(ma20) and pd.notna(ma60) and ma5 > ma20 > ma60):
+            continue
+
+        # v4b 필터: 눌림 진입용 거래량 급감 체크
+        vol_decline_ok = True
+        if len(df) >= 10:
+            recent_vols = df["volume"].iloc[-3:]
+            peak_vol = df["volume"].iloc[-10:-3].max()
+            if peak_vol > 0 and recent_vols.mean() > peak_vol * 0.5:
+                vol_decline_ok = False
+
+        # v4c 가산점 계산
+        bonus = 0
+        vol_ma20 = last.get("vol_ma20", 0) or 0
+        if pd.notna(vol_ma20) and vol_ma20 > 0 and last["volume"] >= vol_ma20 * 2:
+            prev_surges = 0
+            for k in range(max(len(df) - 60, 0), len(df) - 1):
+                row_k = df.iloc[k]
+                v20 = row_k.get("vol_ma20", 0) or 0
+                if pd.notna(v20) and v20 > 0 and row_k["volume"] >= v20 * 2:
+                    if last["close"] > row_k["high"]:
+                        prev_surges += 1
+            if prev_surges >= 1:
+                bonus += 10
+
+        bullish_count = 0
+        for k in range(max(len(df) - 120, 0), len(df)):
+            row_k = df.iloc[k]
+            trade_val = row_k["close"] * row_k["volume"]
+            body_pct = (row_k["close"] - row_k["open"]) / row_k["open"] * 100 if row_k["open"] > 0 else 0
+            if trade_val >= 100_000_000_000 and body_pct >= 10:
+                bullish_count += 1
+        if bullish_count >= 3:
+            bonus += 10
+        elif bullish_count >= 1:
+            bonus += 5
+
+        if len(df) >= 5:
+            recent_trade_vals = df["close"].iloc[-5:] * df["volume"].iloc[-5:]
+            if (recent_trade_vals >= 50_000_000_000).any():
+                bonus += 5
+
+        # 장초반 공략 (커트라인 70, v4c 가산 적용)
         oa_score, oa_breakdown = score_day_open_attack(df)
-        if oa_score >= 60:
-            sl = int(close - 1.5 * atr) if atr > 0 else int(close * 0.98)
-            tp = int(close + 2.0 * atr) if atr > 0 else int(close * 1.03)
+        oa_score += bonus
+        if oa_score >= 70:
+            sl = int(close - 0.9 * atr) if atr > 0 else int(close * 0.98)
+            tp = int(close + 1.3 * atr) if atr > 0 else int(close * 1.025)
+            rr = round(1.0 / 0.7, 2) if atr > 0 else 1.0
             open_attack.append({
                 "code": stock["code"],
                 "name": stock["name"],
@@ -1127,19 +1180,20 @@ def run_day_trade_module(all_stock_data, macro):
                     "entry": close,
                     "stop_loss": sl,
                     "target": tp,
-                    "risk_reward": "1:1.33",
+                    "risk_reward": f"1:{rr}",
                     "atr14": round(atr, 1),
                 },
                 "swing_signals": stock.get("swing_signals", []),
-                "confidence": "강한" if oa_score >= 80 else "보통" if oa_score >= 70 else "약한",
+                "confidence": "강한" if oa_score >= 85 else "보통" if oa_score >= 75 else "약한",
                 "attention_flag": stock.get("attention_flag", False),
             })
 
-        # 눌림 진입
+        # 눌림 진입 (커트라인 65, v4c 가산, 거래량 급감 필수)
         pe_score, pe_breakdown = score_day_pullback_entry(df)
-        if pe_score >= 55:
-            sl = int(close - 1.5 * atr) if atr > 0 else int(close * 0.98)
-            tp = int(close + 2.0 * atr) if atr > 0 else int(close * 1.03)
+        pe_score += bonus
+        if pe_score >= 65 and vol_decline_ok:
+            sl = int(close - 0.9 * atr) if atr > 0 else int(close * 0.98)
+            tp = int(close + 1.3 * atr) if atr > 0 else int(close * 1.025)
             pullback_entry.append({
                 "code": stock["code"],
                 "name": stock["name"],
@@ -1151,11 +1205,11 @@ def run_day_trade_module(all_stock_data, macro):
                     "entry": close,
                     "stop_loss": sl,
                     "target": tp,
-                    "risk_reward": "1:1.33",
+                    "risk_reward": f"1:{round(1.0 / 0.7, 2)}" if atr > 0 else "1:1",
                     "atr14": round(atr, 1),
                 },
                 "swing_signals": stock.get("swing_signals", []),
-                "confidence": "강한" if pe_score >= 80 else "보통" if pe_score >= 70 else "약한",
+                "confidence": "강한" if pe_score >= 85 else "보통" if pe_score >= 75 else "약한",
                 "attention_flag": stock.get("attention_flag", False),
             })
 

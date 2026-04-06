@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.pkl
+docs/backtest_cache_*.pkl
+docs/backtest_result*.json
+strategy_insights_raw.json
+quantocracy.db
