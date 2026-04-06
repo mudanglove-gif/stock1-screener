@@ -1,0 +1,51 @@
+name: Emergency Kill Switch
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: '실행 액션'
+        required: true
+        default: 'disable'
+        type: choice
+        options:
+          - disable
+          - enable
+
+permissions:
+  contents: write
+
+jobs:
+  toggle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Toggle auto trade flag
+        run: |
+          python -c "
+          import json
+          with open('docs/signals.json', 'r', encoding='utf-8') as f:
+              s = json.load(f)
+          enabled = '${{ github.event.inputs.action }}' == 'enable'
+          if 'day_trade' not in s:
+              s['day_trade'] = {}
+          s['day_trade']['auto_trade_enabled'] = enabled
+          s['day_trade']['kill_switch_at'] = __import__('datetime').datetime.now().isoformat()
+          with open('docs/signals.json', 'w', encoding='utf-8') as f:
+              json.dump(s, f, ensure_ascii=False, indent=2)
+          print(f'auto_trade_enabled = {enabled}')
+          "
+
+      - name: Commit
+        run: |
+          git config user.name "Kill Switch Bot"
+          git config user.email "bot@stock1.app"
+          git add docs/signals.json
+          git commit -m "🔴 KILL SWITCH: ${{ github.event.inputs.action }}"
+          git push
