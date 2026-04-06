@@ -335,7 +335,7 @@ def run_backtest(backtest_days=60):
                             pass  # 갭업 과도 → 스킵
                         else:
                             sl = int(close - 0.9 * atr) if atr > 0 else int(close * 0.98)
-                            tp = int(close + 1.3 * atr) if atr > 0 else int(close * 1.025)
+                            tp = int(close + 1.3 * atr) if atr > 0 else int(close * 1.025)  # 최종: 1.3 (1.5/1.7 효과 미미)
 
                             dt_result, dt_pnl = evaluate_day_trade(d1_open, d1_high, d1_low, d1_close, close, sl, tp, atr)
 
