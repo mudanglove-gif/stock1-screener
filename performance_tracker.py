@@ -110,6 +110,8 @@ def evaluate_stock(stock, ohlcv, signal_type):
     else:
         pnl_pct = 0
 
+    # 개별 최적화 + Go/No-Go 메타데이터 (있으면 기록)
+    opt = stock.get("optimized_params", {})
     return {
         "date": ohlcv["date"],
         "code": stock.get("code", ""),
@@ -117,6 +119,11 @@ def evaluate_stock(stock, ohlcv, signal_type):
         "category": category,
         "signal_type": signal_type,
         "score": stock.get("score") or stock.get("day_trade_score", 0),
+        # 개별 최적화 파라미터
+        "opt_method": opt.get("method", "common"),
+        "opt_atr_period": opt.get("atr_period"),
+        "opt_sl_mult": opt.get("sl_multiplier"),
+        "opt_tp_mult": opt.get("tp_multiplier"),
         "entry_planned": entry,
         "entry_actual": actual_entry,
         "stop_loss": stop_loss,
@@ -192,6 +199,14 @@ def track_performance():
     perf = load_performance()
     existing_dates = set(r["date"] + r["code"] for r in perf["records"])
 
+    # Go/No-Go 판정 정보 (전일 09:00 시점 판정)
+    morning_check = signals.get("day_trade", {}).get("morning_check", {})
+    mc_meta = {
+        "mc_verdict": morning_check.get("verdict"),
+        "mc_score": morning_check.get("total_score"),
+        "mc_override": morning_check.get("override_triggered", False),
+    }
+
     new_records = []
 
     # 스윙 시그널 추적
@@ -224,6 +239,8 @@ def track_performance():
 
             record = evaluate_stock(stock, ohlcv, dt_type)
             if record:
+                # 단타 기록에 Go/No-Go 메타데이터 추가
+                record.update(mc_meta)
                 new_records.append(record)
                 print(f"  단타 {dt_type}: {stock['name']}({code}) → {record['result']} ({record['pnl_pct']:+.1f}%)")
 
