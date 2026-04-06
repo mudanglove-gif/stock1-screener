@@ -4198,15 +4198,6 @@
         ],
         "confidence": "보통",
         "attention_flag": false,
-        "after_market": {
-          "checked_at": "2026-04-06T20:56:24.835699+09:00",
-          "price": null,
-          "change_pct": null,
-          "volume": null,
-          "badge": null,
-          "disqualified": false,
-          "disqualify_reason": null
-        },
         "optimized_params": {
           "atr_period": 20,
           "sl_multiplier": 1.5,
@@ -4245,15 +4236,6 @@
         ],
         "confidence": "보통",
         "attention_flag": false,
-        "after_market": {
-          "checked_at": "2026-04-06T20:56:26.947483+09:00",
-          "price": null,
-          "change_pct": null,
-          "volume": null,
-          "badge": null,
-          "disqualified": false,
-          "disqualify_reason": null
-        },
         "optimized_params": {
           "atr_period": 7,
           "sl_multiplier": 1.2,
@@ -4265,7 +4247,7 @@
           "backtest_trade_count": 30,
           "wf_win_rate": 0.846,
           "wf_pf": 8.23,
-          "score": 64.5
+          "score": 64.6
         }
       },
       {
@@ -4293,15 +4275,6 @@
         ],
         "confidence": "보통",
         "attention_flag": false,
-        "after_market": {
-          "checked_at": "2026-04-06T20:56:28.751732+09:00",
-          "price": null,
-          "change_pct": null,
-          "volume": null,
-          "badge": null,
-          "disqualified": false,
-          "disqualify_reason": null
-        },
         "optimized_params": {
           "atr_period": 20,
           "sl_multiplier": 1.5,
@@ -4342,15 +4315,6 @@
         ],
         "confidence": "보통",
         "attention_flag": false,
-        "after_market": {
-          "checked_at": "2026-04-06T20:56:30.852003+09:00",
-          "price": null,
-          "change_pct": null,
-          "volume": null,
-          "badge": null,
-          "disqualified": false,
-          "disqualify_reason": null
-        },
         "optimized_params": {
           "atr_period": 7,
           "sl_multiplier": 1.4,
@@ -4389,15 +4353,6 @@
         ],
         "confidence": "보통",
         "attention_flag": false,
-        "after_market": {
-          "checked_at": "2026-04-06T20:56:33.098770+09:00",
-          "price": null,
-          "change_pct": null,
-          "volume": null,
-          "badge": null,
-          "disqualified": false,
-          "disqualify_reason": null
-        },
         "optimized_params": {
           "atr_period": 10,
           "sl_multiplier": 1.4,
@@ -4436,15 +4391,6 @@
         ],
         "confidence": "보통",
         "attention_flag": false,
-        "after_market": {
-          "checked_at": "2026-04-06T20:56:35.357077+09:00",
-          "price": null,
-          "change_pct": null,
-          "volume": null,
-          "badge": null,
-          "disqualified": false,
-          "disqualify_reason": null
-        },
         "optimized_params": {
           "atr_period": 14,
           "sl_multiplier": 1.4,
@@ -4460,8 +4406,32 @@
         }
       }
     ],
-    "after_market_checked_at": "2026-04-06T20:56:35.357093+09:00",
-    "after_market_status": "failed"
+    "morning_check": {
+      "checked_at": "2026-04-06T18:29:00.148747+09:00",
+      "verdict": "normal",
+      "total_score": 61,
+      "score_breakdown": {
+        "us_market": 13,
+        "vix": 7,
+        "korea_leading": 18,
+        "fx": 8,
+        "events": 15
+      },
+      "compound_penalty": 0,
+      "override_triggered": false,
+      "override_reasons": [],
+      "verdict_reason": "보통 — 사용자 승인 필요",
+      "details": {
+        "sp500_change_pct": 0.11,
+        "nasdaq_change_pct": 0.18,
+        "vix_close": 24.54,
+        "vix_change": -0.71,
+        "kpi200_change_pct": 0.0,
+        "usd_krw": 1501.7,
+        "usd_krw_change": 8.4,
+        "events": []
+      }
+    }
   },
   "related_articles": {
     "golden_cross": [
