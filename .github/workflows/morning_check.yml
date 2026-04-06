@@ -1,0 +1,34 @@
+name: Morning Go/No-Go Check (08:50 KST)
+
+on:
+  schedule:
+    - cron: '50 23 * * 0-4'  # 매일 08:50 KST (UTC 23:50 전날), 일~목 (= 한국 월~금 아침)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run morning check
+        run: python morning_check.py
+
+      - name: Commit results
+        run: |
+          git config user.name "Morning Check Bot"
+          git config user.email "bot@stock1.app"
+          git add docs/signals.json
+          git diff --staged --quiet || git commit -m "update morning check $(date +'%Y-%m-%d %H:%M')"
+          git push

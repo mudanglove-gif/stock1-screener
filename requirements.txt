@@ -5,3 +5,4 @@ numpy
 fredapi
 requests
 beautifulsoup4
+yfinance
