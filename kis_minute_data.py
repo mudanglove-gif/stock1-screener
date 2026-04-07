@@ -14,6 +14,7 @@ KIS OpenAPI 분봉 데이터 수집 모듈
 import os
 import time
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Optional
 
 import pandas as pd
@@ -21,6 +22,32 @@ import requests
 
 # 실전투자 URL (모의투자가 아님)
 KIS_URL = "https://openapi.koreainvestment.com:9443"
+
+
+def _load_env_file():
+    """프로젝트 루트의 .env 파일을 환경변수로 로드 (python-dotenv 의존성 없이)"""
+    env_path = Path(__file__).parent / ".env"
+    if not env_path.exists():
+        return
+    try:
+        with open(env_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                if "=" not in line:
+                    continue
+                key, _, value = line.partition("=")
+                key = key.strip()
+                value = value.strip().strip('"').strip("'")
+                if key and value and key not in os.environ:
+                    os.environ[key] = value
+    except Exception:
+        pass
+
+
+# 모듈 import 시 자동 로드
+_load_env_file()
 
 _app_key: Optional[str] = None
 _app_secret: Optional[str] = None
@@ -75,43 +102,32 @@ def _get_access_token() -> Optional[str]:
         return None
 
 
-def fetch_minute_data(stock_code: str, interval: str = "30", days: int = 30) -> Optional[pd.DataFrame]:
+def _fetch_one_day_minute(stock_code: str, date_str: str, token: str) -> list:
     """
-    분봉 데이터 조회
-    Args:
-        stock_code: 종목코드 (6자리)
-        interval: 1/3/5/10/15/30/60분
-        days: 최근 N거래일
-    Returns:
-        DataFrame [datetime, open, high, low, close, volume] or None
+    특정 날짜의 1분봉 데이터 1회 호출 (최대 31건 = 09:00~14:30 일부)
+    KIS는 시간 역순으로 응답 → start_time을 페이징으로 변경
     """
-    token = _get_access_token()
-    if token is None:
-        return None
-
+    url = f"{KIS_URL}/uapi/domestic-stock/v1/quotations/inquire-time-dailychartprice"
     headers = {
         "content-type": "application/json; charset=utf-8",
         "authorization": f"Bearer {token}",
         "appkey": _app_key,
         "appsecret": _app_secret,
-        "tr_id": "FHKST03010200",  # 주식분봉조회
+        "tr_id": "FHKST03010230",  # 주식일분봉조회 (과거 분봉)
     }
-
-    end_dt = datetime.now()
-    all_rows = []
-
-    # 일자별로 페이징 (1회 100건 최대)
-    for d in range(days):
-        date = end_dt - timedelta(days=d)
-        date_str = date.strftime("%Y%m%d")
+    rows = []
+    # 30분 간격으로 페이징 (09:30, 10:30, 11:30, 13:30, 14:30, 15:30)
+    # 각 호출이 시간 역순 31건이므로 09:30 호출 = 약 09:00~09:30
+    page_hours = ["153000", "143000", "133000", "123000", "113000", "103000", "093000"]
+    for hour in page_hours:
         params = {
-            "FID_ETC_CLS_CODE": "",
             "FID_COND_MRKT_DIV_CODE": "J",
             "FID_INPUT_ISCD": stock_code,
-            "FID_INPUT_HOUR_1": "153000",  # 장 마감 시각
-            "FID_PW_DATA_INCU_YN": "Y",
+            "FID_INPUT_HOUR_1": hour,
+            "FID_INPUT_DATE_1": date_str,
+            "FID_PW_DATA_INCU_YN": "N",
+            "FID_FAKE_TICK_INCU_YN": "",
         }
-        url = f"{KIS_URL}/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice"
         try:
             resp = requests.get(url, headers=headers, params=params, timeout=10)
             if resp.status_code != 200:
@@ -121,14 +137,13 @@ def fetch_minute_data(stock_code: str, interval: str = "30", days: int = 30) -> 
                 continue
             output2 = data.get("output2", [])
             for row in output2:
-                date_str = row.get("stck_bsop_date", "")
-                time_str = row.get("stck_cntg_hour", "")
-                if not date_str or not time_str:
+                d_str = row.get("stck_bsop_date", "")
+                t_str = row.get("stck_cntg_hour", "")
+                if not d_str or not t_str:
                     continue
-                dt_str = f"{date_str}{time_str}"
                 try:
-                    dt = datetime.strptime(dt_str, "%Y%m%d%H%M%S")
-                    all_rows.append({
+                    dt = datetime.strptime(f"{d_str}{t_str}", "%Y%m%d%H%M%S")
+                    rows.append({
                         "datetime": dt,
                         "open": int(row.get("stck_oprc", 0)),
                         "high": int(row.get("stck_hgpr", 0)),
@@ -138,15 +153,48 @@ def fetch_minute_data(stock_code: str, interval: str = "30", days: int = 30) -> 
                     })
                 except (ValueError, TypeError):
                     continue
-            time.sleep(0.1)  # API 호출 제한 회피
-        except Exception as e:
-            print(f"  {stock_code} 분봉 조회 실패: {e}")
+            time.sleep(0.1)
+        except Exception:
             continue
+    return rows
+
+
+def fetch_minute_data(stock_code: str, interval: str = "30", days: int = 30) -> Optional[pd.DataFrame]:
+    """
+    과거 분봉 데이터 조회 (KIS FHKST03010230)
+    Args:
+        stock_code: 종목코드 (6자리)
+        interval: 1/3/5/10/15/30/60분 (1분봉을 받아서 리샘플링)
+        days: 최근 N거래일
+    Returns:
+        DataFrame [datetime, open, high, low, close, volume] or None
+    """
+    token = _get_access_token()
+    if token is None:
+        return None
+
+    end_dt = datetime.now()
+    all_rows = []
+    fetched_days = 0
+    day_offset = 0
+
+    while fetched_days < days and day_offset < days * 2:
+        date = end_dt - timedelta(days=day_offset)
+        # 주말 스킵
+        if date.weekday() >= 5:
+            day_offset += 1
+            continue
+        date_str = date.strftime("%Y%m%d")
+        rows = _fetch_one_day_minute(stock_code, date_str, token)
+        if rows:
+            all_rows.extend(rows)
+            fetched_days += 1
+        day_offset += 1
 
     if not all_rows:
         return None
 
-    df = pd.DataFrame(all_rows).drop_duplicates("datetime").sort_values("datetime")
+    df = pd.DataFrame(all_rows).drop_duplicates("datetime").sort_values("datetime").reset_index(drop=True)
 
     # interval에 맞게 리샘플링
     if interval != "1":

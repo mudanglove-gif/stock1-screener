@@ -5,3 +5,4 @@ docs/backtest_cache_*.pkl
 docs/backtest_result*.json
 strategy_insights_raw.json
 quantocracy.db
+.env
