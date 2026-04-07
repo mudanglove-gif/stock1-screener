@@ -71,24 +71,20 @@ def fetch_vix():
 
 
 def fetch_kpi200_futures():
-    """네이버 금융에서 KOSPI200 지수/선물 등락"""
+    """네이버 모바일 API로 KOSPI200 지수 등락"""
     try:
-        url = "https://finance.naver.com/sise/sise_index.naver?code=KPI200"
+        url = "https://m.stock.naver.com/api/index/KPI200/basic"
         resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
-        soup = BeautifulSoup(resp.text, "html.parser")
-        # 현재가 + 전일대비
-        now_val = soup.select_one("#now_value")
-        diff_val = soup.select_one("#change_value_and_rate")
-        change_pct = 0.0
-        if diff_val:
-            text = diff_val.get_text(strip=True)
-            # "1.23 +0.15%" 형태에서 % 추출
-            import re
-            m = re.search(r"([+-]?\d+\.\d+)%", text)
-            if m:
-                change_pct = float(m.group(1))
+        if resp.status_code != 200:
+            return {"available": False, "kpi200_change_pct": 0}
+        data = resp.json()
+        ratio = float(data.get("fluctuationsRatio", 0))
+        # 부호 처리
+        sign_code = data.get("compareToPreviousPrice", {}).get("code", "3")
+        if sign_code in ("4", "5"):
+            ratio = -ratio
         return {
-            "kpi200_change_pct": change_pct,
+            "kpi200_change_pct": ratio,
             "available": True,
         }
     except Exception as e:
@@ -124,15 +120,26 @@ def fetch_fx():
 
 
 def fetch_foreign_futures():
-    """네이버 외국인 선물 매매동향 (시도)"""
+    """네이버 모바일 API로 KOSPI 외국인 매매동향 (현물 기준, 선물 데이터는 KIS API 필요)"""
     try:
-        url = "https://finance.naver.com/sise/investorDealTrendDay.naver"
+        url = "https://m.stock.naver.com/api/index/KOSPI/integration"
         resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
-        soup = BeautifulSoup(resp.text, "html.parser")
-        # 외국인 선물 순매수 파싱 (구조 복잡, 일단 available만 체크)
-        return {"available": resp.status_code == 200, "net_buy": 0}
+        if resp.status_code != 200:
+            return {"available": False, "net_buy": 0}
+        data = resp.json()
+        deal = data.get("dealTrendInfo", {})
+        foreign = deal.get("foreignValue", "0")
+        # "+844" / "-1,105" 형태 → 숫자
+        try:
+            net_buy = int(foreign.replace(",", "").replace("+", ""))
+        except (ValueError, AttributeError):
+            net_buy = 0
+        return {
+            "available": True,
+            "net_buy": net_buy,  # 단위 추정: 억원
+        }
     except Exception as e:
-        print(f"  외국인 선물 조회 실패: {e}")
+        print(f"  외국인 매매동향 조회 실패: {e}")
         return {"available": False, "net_buy": 0}
 
 
@@ -144,9 +151,26 @@ def fetch_events():
 
 
 MAJOR_EVENTS = {
-    # 분기별로 사전 등록
-    # "2026-04-29": ["FOMC 금리 결정"],
-    # "2026-05-02": ["미국 고용지표"],
+    # 2026 Q2 주요 이벤트 (분기별로 갱신 필요)
+    # 미국 고용지표 (NFP) - 매월 첫째 금요일
+    "2026-04-03": ["미국 3월 고용지표 (NFP)"],
+    "2026-05-01": ["미국 4월 고용지표 (NFP)"],
+    "2026-06-05": ["미국 5월 고용지표 (NFP)"],
+    # 미국 CPI - 매월 중순
+    "2026-04-10": ["미국 3월 CPI"],
+    "2026-05-12": ["미국 4월 CPI"],
+    "2026-06-10": ["미국 5월 CPI"],
+    # FOMC - 분기별 + 회의록
+    "2026-04-29": ["FOMC 금리 결정 (4월)"],
+    "2026-06-17": ["FOMC 금리 결정 + 점도표 (6월)"],
+    # 한국은행 금통위 - 매월 중순
+    "2026-04-10": ["한국은행 금통위"],
+    "2026-05-22": ["한국은행 금통위"],
+    "2026-07-10": ["한국은행 금통위"],
+    # 미국 PCE 물가지수 - 월 마지막 영업일
+    "2026-04-30": ["미국 3월 PCE"],
+    "2026-05-30": ["미국 4월 PCE"],
+    "2026-06-26": ["미국 5월 PCE"],
 }
 
 
