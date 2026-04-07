@@ -4461,28 +4461,28 @@
       }
     ],
     "morning_check": {
-      "checked_at": "2026-04-06T18:29:00.148747+09:00",
-      "verdict": "normal",
-      "total_score": 61,
+      "checked_at": "2026-04-07T10:03:46.230552+09:00",
+      "verdict": "optimistic",
+      "total_score": 72,
       "score_breakdown": {
-        "us_market": 13,
+        "us_market": 12,
         "vix": 7,
-        "korea_leading": 18,
+        "korea_leading": 30,
         "fx": 8,
         "events": 15
       },
       "compound_penalty": 0,
       "override_triggered": false,
       "override_reasons": [],
-      "verdict_reason": "보통 — 사용자 승인 필요",
+      "verdict_reason": "낙관",
       "details": {
-        "sp500_change_pct": 0.11,
-        "nasdaq_change_pct": 0.18,
-        "vix_close": 24.54,
-        "vix_change": -0.71,
-        "kpi200_change_pct": 0.0,
-        "usd_krw": 1501.7,
-        "usd_krw_change": 8.4,
+        "sp500_change_pct": 0,
+        "nasdaq_change_pct": 0,
+        "vix_close": 23.87,
+        "vix_change": -0.67,
+        "kpi200_change_pct": 1.71,
+        "usd_krw": 1507.4,
+        "usd_krw_change": 1.1,
         "events": []
       }
     },
