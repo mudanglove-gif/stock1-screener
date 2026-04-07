@@ -27,13 +27,6 @@ jobs:
           KIS_MOCK_APP_KEY: ${{ secrets.KIS_MOCK_APP_KEY }}
           KIS_MOCK_APP_SECRET: ${{ secrets.KIS_MOCK_APP_SECRET }}
           KIS_MOCK_ACCOUNT_NO: ${{ secrets.KIS_MOCK_ACCOUNT_NO }}
+          STOCK1_PRIVATE_PAT: ${{ secrets.STOCK1_PRIVATE_PAT }}
           AUTO_TRADE_MODE: mock
         run: python auto_trader.py entry
-
-      - name: Commit results
-        run: |
-          git config user.name "Auto Trader Bot"
-          git config user.email "bot@stock1.app"
-          git add docs/trades.json
-          git diff --staged --quiet || git commit -m "auto trade entry $(date +'%Y-%m-%d %H:%M')"
-          git push

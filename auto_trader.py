@@ -22,6 +22,7 @@ Stock1 자동매매 실행 모듈
   AUTO_TRADE_MAX_DAILY_LOSS = 일일 최대 손실 (원, 기본 -1000000)
 """
 
+import base64
 import json
 import os
 import sys
@@ -29,12 +30,20 @@ import time
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
+import requests
+
 import kis_order as ko
 
 KST = timezone(timedelta(hours=9))
 SCRIPT_DIR = Path(__file__).parent
 SIGNALS_PATH = SCRIPT_DIR / "docs" / "signals.json"
-TRADES_PATH = SCRIPT_DIR / "docs" / "trades.json"
+TRADES_PATH = SCRIPT_DIR / "docs" / "trades.json"  # 로컬 fallback 전용
+
+# 비공개 거래 데이터: stock1-private repo에 GitHub Contents API로 저장
+PRIVATE_REPO = "mudanglove-gif/stock1-private"
+PRIVATE_TRADES_FILE = "trades.json"
+PRIVATE_PAT = os.environ.get("STOCK1_PRIVATE_PAT", "")
+_TRADES_SHA_CACHE = None  # PUT 시 필요한 sha 캐시
 
 # 설정
 MODE = os.environ.get("AUTO_TRADE_MODE", "mock")
@@ -61,7 +70,31 @@ def load_signals():
         return json.load(f)
 
 
+def _gh_headers():
+    return {
+        "Authorization": f"Bearer {PRIVATE_PAT}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+
+
 def load_trades():
+    """PAT 있으면 stock1-private에서 fetch, 없으면 로컬 파일 fallback"""
+    global _TRADES_SHA_CACHE
+    if PRIVATE_PAT:
+        try:
+            url = f"https://api.github.com/repos/{PRIVATE_REPO}/contents/{PRIVATE_TRADES_FILE}"
+            r = requests.get(url, headers=_gh_headers(), timeout=15)
+            if r.status_code == 404:
+                _TRADES_SHA_CACHE = None
+                return {"records": [], "summary": {}}
+            r.raise_for_status()
+            payload = r.json()
+            _TRADES_SHA_CACHE = payload.get("sha")
+            content = base64.b64decode(payload["content"]).decode("utf-8")
+            return json.loads(content)
+        except Exception as e:
+            print(f"⚠️ stock1-private load 실패, 로컬 fallback: {e}")
     if not TRADES_PATH.exists():
         return {"records": [], "summary": {}}
     try:
@@ -72,6 +105,24 @@ def load_trades():
 
 
 def save_trades(data):
+    """PAT 있으면 stock1-private에 commit, 없으면 로컬 파일에 저장"""
+    global _TRADES_SHA_CACHE
+    if PRIVATE_PAT:
+        try:
+            content_str = json.dumps(data, ensure_ascii=False, indent=2)
+            body = {
+                "message": f"trades update {now_iso()}",
+                "content": base64.b64encode(content_str.encode("utf-8")).decode("ascii"),
+            }
+            if _TRADES_SHA_CACHE:
+                body["sha"] = _TRADES_SHA_CACHE
+            url = f"https://api.github.com/repos/{PRIVATE_REPO}/contents/{PRIVATE_TRADES_FILE}"
+            r = requests.put(url, headers=_gh_headers(), json=body, timeout=15)
+            r.raise_for_status()
+            _TRADES_SHA_CACHE = r.json().get("content", {}).get("sha")
+            return
+        except Exception as e:
+            print(f"⚠️ stock1-private save 실패, 로컬 저장으로 fallback: {e}")
     TRADES_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(TRADES_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)

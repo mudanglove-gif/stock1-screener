@@ -854,6 +854,19 @@ def run_screener():
 
     # 단타 모듈 실행
     day_trade = run_day_trade_module(day_trade_candidates, macro)
+
+    # 킬스위치 상태 보존 (기존 signals.json에 auto_trade_enabled가 있으면 유지)
+    try:
+        with open(OUTPUT_PATH, "r", encoding="utf-8") as f:
+            prev = json.load(f)
+        prev_dt = prev.get("day_trade", {})
+        if "auto_trade_enabled" in prev_dt:
+            day_trade["auto_trade_enabled"] = prev_dt["auto_trade_enabled"]
+        if "kill_switch_at" in prev_dt:
+            day_trade["kill_switch_at"] = prev_dt["kill_switch_at"]
+    except Exception:
+        pass
+
     print(f"\n단타 시그널:")
     print(f"  장초반 공략: {len(day_trade['day_open_attack'])}개")
     print(f"  눌림 진입: {len(day_trade['day_pullback_entry'])}개")
