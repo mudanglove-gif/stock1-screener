@@ -4210,6 +4210,15 @@
           "wf_win_rate": 0.778,
           "wf_pf": 8.59,
           "score": 62.2
+        },
+        "after_market": {
+          "checked_at": "2026-04-07T09:30:48.176443+09:00",
+          "price": 23600,
+          "change_pct": 4.26,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
         }
       },
       {
@@ -4248,6 +4257,15 @@
           "wf_win_rate": 0.846,
           "wf_pf": 8.23,
           "score": 64.6
+        },
+        "after_market": {
+          "checked_at": "2026-04-07T09:30:48.685422+09:00",
+          "price": 232000,
+          "change_pct": 3.33,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
         }
       },
       {
@@ -4287,6 +4305,15 @@
           "wf_win_rate": 0.909,
           "wf_pf": 16.65,
           "score": 49.5
+        },
+        "after_market": {
+          "checked_at": "2026-04-07T09:30:49.196419+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
         }
       }
     ],
@@ -4327,6 +4354,15 @@
           "wf_win_rate": 0.625,
           "wf_pf": 1.6,
           "score": 58.8
+        },
+        "after_market": {
+          "checked_at": "2026-04-07T09:30:49.706422+09:00",
+          "price": 46100,
+          "change_pct": 1.43,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
         }
       },
       {
@@ -4365,6 +4401,15 @@
           "wf_win_rate": 0.636,
           "wf_pf": 1.49,
           "score": 64.0
+        },
+        "after_market": {
+          "checked_at": "2026-04-07T09:30:50.175172+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
         }
       },
       {
@@ -4403,6 +4448,15 @@
           "wf_win_rate": 0.769,
           "wf_pf": 2.7,
           "score": 65.4
+        },
+        "after_market": {
+          "checked_at": "2026-04-07T09:30:50.657435+09:00",
+          "price": 394000,
+          "change_pct": 3.08,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
         }
       }
     ],
@@ -4431,7 +4485,9 @@
         "usd_krw_change": 8.4,
         "events": []
       }
-    }
+    },
+    "after_market_checked_at": "2026-04-07T09:30:50.657435+09:00",
+    "after_market_status": "partial"
   },
   "related_articles": {
     "golden_cross": [

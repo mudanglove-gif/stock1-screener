@@ -37,7 +37,7 @@ def fetch_signals_json():
 
 
 def fetch_after_market_data(code):
-    """네이버 금융에서 시간외 단일가 데이터 조회"""
+    """네이버 모바일 API에서 시간외 단일가 데이터 조회"""
     result = {
         "available": False,
         "price": None,
@@ -45,60 +45,47 @@ def fetch_after_market_data(code):
         "volume": None,
     }
     try:
-        url = f"https://finance.naver.com/item/main.naver?code={code}"
+        url = f"https://m.stock.naver.com/api/stock/{code}/basic"
         resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
-        soup = BeautifulSoup(resp.text, "html.parser")
+        if resp.status_code != 200:
+            return result
+        data = resp.json()
 
-        # 시간외 단일가 영역
-        after_area = soup.select_one("div.after_hour")
-        if not after_area:
-            # 대안: 시간외 거래 테이블
-            after_area = soup.select_one("table.after")
+        # overMarketPriceInfo 추출
+        omp = data.get("overMarketPriceInfo")
+        if not omp:
+            return result
 
-        if after_area:
-            # 시간외 체결가
-            price_el = after_area.select_one("span.tah.p11")
-            if price_el:
-                price_text = price_el.get_text(strip=True).replace(",", "")
-                if price_text.isdigit():
-                    result["price"] = int(price_text)
-                    result["available"] = True
+        # 시간외 거래 활성 여부 확인 (장중이면 정규장이라 시간외 데이터 없음)
+        status = omp.get("overMarketStatus")
+        # OPEN, CLOSED, etc. — 가격이 있으면 사용
+        over_price = omp.get("overPrice")
+        if not over_price:
+            return result
 
-        # 시간외 가격을 못 찾으면 m.stock.naver.com 시도
-        if not result["available"]:
-            url2 = f"https://m.stock.naver.com/api/stock/{code}/integration"
-            resp2 = requests.get(url2, headers={"User-Agent": "Mozilla/5.0"}, timeout=5)
-            if resp2.status_code == 200:
-                data = resp2.json()
-                # 시간외 단일가 정보
-                for info in data.get("dealInfos", []):
-                    if "시간외" in info.get("key", ""):
-                        val = info.get("value", "").replace(",", "").strip()
-                        if val.isdigit():
-                            result["price"] = int(val)
-                            result["available"] = True
-                            break
+        try:
+            price = int(over_price.replace(",", ""))
+        except (ValueError, AttributeError):
+            return result
 
-        # 종가 대비 등락률 계산
-        if result["available"] and result["price"]:
-            # 정규장 종가 가져오기
-            close_el = soup.select_one("p.no_today span.blind")
-            if close_el:
-                close_text = close_el.get_text(strip=True).replace(",", "")
-                if close_text.isdigit():
-                    close = int(close_text)
-                    if close > 0:
-                        result["change_pct"] = round((result["price"] - close) / close * 100, 2)
+        if price <= 0:
+            return result
 
-        # 시간외 거래량 (있으면)
-        if after_area:
-            vol_els = after_area.select("span.tah.p11")
-            for el in vol_els:
-                text = el.get_text(strip=True).replace(",", "")
-                if text.isdigit() and int(text) > 100:  # 가격이 아닌 거래량
-                    if result["price"] and int(text) != result["price"]:
-                        result["volume"] = int(text)
-                        break
+        result["price"] = price
+        result["available"] = True
+
+        # 등락률 (이미 API가 계산해줌)
+        ratio = omp.get("fluctuationsRatio")
+        if ratio:
+            try:
+                # 부호 처리: compareToPreviousPrice.code (1,2: 상승, 4,5: 하락)
+                sign_code = omp.get("compareToPreviousPrice", {}).get("code", "3")
+                pct = float(ratio)
+                if sign_code in ("4", "5"):
+                    pct = -pct
+                result["change_pct"] = pct
+            except (ValueError, TypeError):
+                pass
 
     except Exception as e:
         print(f"  {code} 시간외 조회 실패: {e}")
