@@ -1,0 +1,39 @@
+name: Auto Trade Entry (09:00 KST)
+
+on:
+  schedule:
+    - cron: '0 0 * * 1-5'  # 매일 09:00 KST (UTC 00:00), 월~금
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  entry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run auto trader entry
+        env:
+          KIS_MOCK_APP_KEY: ${{ secrets.KIS_MOCK_APP_KEY }}
+          KIS_MOCK_APP_SECRET: ${{ secrets.KIS_MOCK_APP_SECRET }}
+          KIS_MOCK_ACCOUNT_NO: ${{ secrets.KIS_MOCK_ACCOUNT_NO }}
+          AUTO_TRADE_MODE: mock
+        run: python auto_trader.py entry
+
+      - name: Commit results
+        run: |
+          git config user.name "Auto Trader Bot"
+          git config user.email "bot@stock1.app"
+          git add docs/trades.json
+          git diff --staged --quiet || git commit -m "auto trade entry $(date +'%Y-%m-%d %H:%M')"
+          git push
