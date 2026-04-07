@@ -19,6 +19,8 @@ import pandas as pd
 import pandas_ta as ta
 import FinanceDataReader as fdr
 
+import kis_minute_data as km
+
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "docs")
 SIGNALS_PATH = os.path.join(OUTPUT_DIR, "signals.json")
 
@@ -153,6 +155,74 @@ def backtest_day_trade_single(df, atr_period, sl_mult, tp_mult, eval_days=None):
     }
 
 
+def simulate_minute_day_trade(minute_df, atr_value, sl_mult, tp_mult, signal_type="day_open_attack"):
+    """
+    분봉 기반 30분 단타 시뮬레이션
+    Args:
+        minute_df: KIS 분봉 데이터 (datetime, OHLCV)
+        atr_value: 일봉 ATR
+        sl_mult, tp_mult: 손절/목표 배수
+        signal_type: day_open_attack(09:00 진입) / day_pullback_entry(09:30 진입)
+    Returns: dict (win/loss/timeout, pnl)
+    """
+    if minute_df is None or minute_df.empty or atr_value <= 0:
+        return None
+
+    # 일자별로 그룹화
+    minute_df = minute_df.copy()
+    minute_df["date"] = pd.to_datetime(minute_df["datetime"]).dt.date
+
+    results = []
+    for date, day_df in minute_df.groupby("date"):
+        day_df = day_df.sort_values("datetime").reset_index(drop=True)
+        if len(day_df) < 5:
+            continue
+
+        # 진입 시점 결정
+        if signal_type == "day_open_attack":
+            entry_idx = 0  # 09:00
+            exit_idx = next((i for i, t in enumerate(day_df["datetime"]) if t.hour >= 15 and t.minute >= 20), len(day_df) - 1)
+        else:  # day_pullback_entry
+            entry_idx = next((i for i, t in enumerate(day_df["datetime"]) if t.hour >= 9 and t.minute >= 30), 0)
+            exit_idx = next((i for i, t in enumerate(day_df["datetime"]) if t.hour >= 15 and t.minute >= 20), len(day_df) - 1)
+
+        if entry_idx >= exit_idx:
+            continue
+
+        entry_price = day_df.iloc[entry_idx]["open"]
+        sl = entry_price - sl_mult * atr_value
+        tp = entry_price + tp_mult * atr_value
+
+        # 진입 ~ 청산 사이 분봉 순회
+        result = "timeout"
+        exit_price = day_df.iloc[exit_idx]["close"]
+        for i in range(entry_idx + 1, exit_idx + 1):
+            bar = day_df.iloc[i]
+            # 분봉 내 고가/저가로 손절/목표 체크
+            if bar["low"] <= sl:
+                result = "loss"
+                exit_price = sl
+                break
+            if bar["high"] >= tp:
+                result = "win"
+                exit_price = tp
+                break
+
+        if result == "timeout":
+            # 강제 청산 (15:20)
+            if exit_price > entry_price * 1.001:
+                result = "win_partial"
+            elif exit_price < entry_price * 0.999:
+                result = "loss_partial"
+            else:
+                result = "breakeven"
+
+        pnl = (exit_price - entry_price) / entry_price * 100
+        results.append({"date": str(date), "result": result, "pnl": round(pnl, 2)})
+
+    return results
+
+
 def calculate_score(result):
     """복합 스코어 (승률40+수익률25+손익비15+안정성20)"""
     if result is None or result["trade_count"] < MIN_TRADE_COUNT:
@@ -272,6 +342,35 @@ def optimize_stock(code, name):
             print(f"  공통값 대비 개선 {improvement:.1f}% < {MIN_IMPROVEMENT_PCT}% → 공통값 사용")
             return {**COMMON_PARAMS, "method": "common", "reason": f"개선폭 {improvement:.1f}%"}
 
+    # 분봉 검증 (KIS API 사용 가능 시)
+    minute_validation = None
+    if km.is_available():
+        try:
+            atr_col = f"atr_{best['atr_period']}"
+            atr_value = float(df[atr_col].iloc[-1]) if atr_col in df.columns else 0
+            print(f"  분봉 검증 시작 (KIS API)...")
+            minute_df = km.fetch_minute_data(code, interval="30", days=20)
+            if minute_df is not None and not minute_df.empty:
+                sim = simulate_minute_day_trade(
+                    minute_df, atr_value,
+                    best["sl_multiplier"], best["tp_multiplier"],
+                    "day_open_attack",
+                )
+                if sim:
+                    wins = [r for r in sim if r["result"] in ("win", "win_partial")]
+                    losses = [r for r in sim if r["result"] in ("loss", "loss_partial")]
+                    decided = len(wins) + len(losses)
+                    win_rate = round(len(wins) / decided * 100, 1) if decided > 0 else 0
+                    avg_pnl = round(sum(r["pnl"] for r in sim) / len(sim), 2)
+                    minute_validation = {
+                        "trades": len(sim),
+                        "win_rate": win_rate,
+                        "avg_pnl": avg_pnl,
+                    }
+                    print(f"  분봉 검증: {len(sim)}거래, 승률 {win_rate}%, 평균 {avg_pnl:+.2f}%")
+        except Exception as e:
+            print(f"  분봉 검증 실패: {e}")
+
     # 채택
     print(f"  ✅ 개별 최적화 채택")
     return {
@@ -286,6 +385,7 @@ def optimize_stock(code, name):
         "wf_win_rate": wf_result["win_rate"],
         "wf_pf": wf_result["pf"],
         "score": best["score"],
+        "minute_validation": minute_validation,
     }
 
 
