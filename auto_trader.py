@@ -27,7 +27,7 @@ import json
 import os
 import sys
 import time
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, time as dtime
 from pathlib import Path
 
 import requests
@@ -199,9 +199,24 @@ def run_entry():
     print(f"실행 시간: {now_iso()}")
     print("=" * 60)
 
+    # 0a. 시간 게이트 — 09:30 KST 초과 시 단타 진입 금지
+    now = now_kst().time()
+    if now > dtime(9, 30):
+        print(f"⏰ 진입 시간 종료 ({now.strftime('%H:%M:%S')} > 09:30) — 스킵")
+        return
+
     signals = load_signals()
     if not signals:
         print("❌ signals.json 없음")
+        return
+
+    # 0b. Idempotency — 오늘 이미 단타 진입 기록 있으면 스킵
+    trades = load_trades()
+    today = today_str()
+    already = [r for r in trades["records"]
+               if r.get("date") == today and r.get("signal_type", "").startswith("day_")]
+    if already:
+        print(f"✅ 오늘({today}) 이미 진입 완료 ({len(already)}건) — 스킵")
         return
 
     # 1. 킬스위치 체크
@@ -217,7 +232,6 @@ def run_entry():
     print(f"✅ 시장 판정: {reason}")
 
     # 3. 일일 손실 체크 (전일 손실)
-    trades = load_trades()
     today_pnl = check_daily_loss(trades)
     if today_pnl <= MAX_DAILY_LOSS:
         print(f"🚫 일일 최대 손실 초과 ({today_pnl:,}원) — 진입 중단")

@@ -2,7 +2,9 @@ name: Auto Trade Entry (09:00 KST)
 
 on:
   schedule:
-    - cron: '0 0 * * 1-5'  # 매일 09:00 KST (UTC 00:00), 월~금
+    - cron: '0 0 * * 1-5'   # 09:00 KST (UTC 00:00), 월~금
+    - cron: '5 0 * * 1-5'   # 09:05 KST — 지연 백업
+    - cron: '10 0 * * 1-5'  # 09:10 KST — 2차 백업
   workflow_dispatch:
 
 permissions:
