@@ -1,15 +1,15 @@
-name: Auto Trade Exit (15:20 KST)
+name: Auto Trade Rotate (09:30 KST)
 
 on:
   schedule:
-    - cron: '20 6 * * 1-5'  # 매일 15:20 KST (UTC 06:20), 월~금
+    - cron: '30 0 * * 1-5'  # 09:30 KST (UTC 00:30), 월~금
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  exit:
+  rotate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Run auto trader exit (비상 전체 청산)
+      - name: Run rotate (장초반 강제탈출 + 눌림 진입)
         env:
           KIS_MOCK_APP_KEY: ${{ secrets.KIS_MOCK_APP_KEY }}
           KIS_MOCK_APP_SECRET: ${{ secrets.KIS_MOCK_APP_SECRET }}
@@ -31,4 +31,4 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           AUTO_TRADE_MODE: mock
-        run: python auto_trader.py exit
+        run: python auto_trader.py rotate

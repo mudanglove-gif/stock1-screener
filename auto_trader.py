@@ -19,7 +19,11 @@ Stock1 자동매매 실행 모듈
   KIS_MOCK_APP_KEY/SECRET, KIS_MOCK_ACCOUNT_NO  (모의)
   AUTO_TRADE_MODE = mock | real (기본 mock)
   AUTO_TRADE_BUDGET_PCT = 종목당 예산 비율 (기본 15%)
-  AUTO_TRADE_MAX_DAILY_LOSS = 일일 최대 손실 (원, 기본 -1000000)
+  AUTO_TRADE_MAX_DAILY_LOSS_PCT = 일일 최대 손실 비율 (%, 기본 1.5)
+    - 계좌 평가금액 × 비율로 동적 산출
+    - 시장 레짐에 따라 조정: risk_off×0.3 / caution×0.6 / neutral×1.0 / risk_on×1.3
+  TELEGRAM_BOT_TOKEN = 텔레그램 봇 토큰 (선택)
+  TELEGRAM_CHAT_ID   = 텔레그램 채팅 ID (선택)
 """
 
 import base64
@@ -48,7 +52,11 @@ _TRADES_SHA_CACHE = None  # PUT 시 필요한 sha 캐시
 # 설정
 MODE = os.environ.get("AUTO_TRADE_MODE", "mock")
 BUDGET_PCT = float(os.environ.get("AUTO_TRADE_BUDGET_PCT", "15")) / 100  # 15%
-MAX_DAILY_LOSS = int(os.environ.get("AUTO_TRADE_MAX_DAILY_LOSS", "-1000000"))
+MAX_DAILY_LOSS_PCT = float(os.environ.get("AUTO_TRADE_MAX_DAILY_LOSS_PCT", "1.5")) / 100  # 기본 1.5%
+
+# 텔레그램
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 
 def now_kst():
@@ -61,6 +69,51 @@ def now_iso():
 
 def today_str():
     return now_kst().strftime("%Y-%m-%d")
+
+
+# ──────────────────────────────────────────────
+# S7: 텔레그램 알림
+# ──────────────────────────────────────────────
+
+def send_telegram(msg: str):
+    """텔레그램 메시지 전송 (TELEGRAM_BOT_TOKEN/CHAT_ID 없으면 무시)"""
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        requests.post(
+            url,
+            json={"chat_id": TELEGRAM_CHAT_ID, "text": msg, "parse_mode": "HTML"},
+            timeout=10,
+        )
+    except Exception as e:
+        print(f"텔레그램 전송 실패: {e}")
+
+
+# ──────────────────────────────────────────────
+# S6: 동적 일일 손실 한도
+# ──────────────────────────────────────────────
+
+def calc_dynamic_max_loss(total_eval: int, signals) -> int:
+    """
+    계좌 잔고 × 손실 비율 × 레짐 배수 → 동적 최대 손실 한도 (음수)
+    - 기본: -1.5% of total_eval
+    - risk_off × 0.3 / caution × 0.6 / neutral × 1.0 / risk_on × 1.3
+    - 최소 -100,000원 (너무 타이트해지지 않도록)
+    """
+    base_loss = -(total_eval * MAX_DAILY_LOSS_PCT)
+
+    regime = "neutral"
+    if signals:
+        regime = signals.get("market_regime", {}).get("regime", "neutral")
+
+    regime_mult = {"risk_off": 0.3, "caution": 0.6, "neutral": 1.0, "risk_on": 1.3}
+    mult = regime_mult.get(regime, 1.0)
+
+    dynamic_loss = int(base_loss * mult)
+    result = max(dynamic_loss, -100_000)
+    print(f"동적 손실 한도: {result:,}원 (레짐:{regime}, 배수:{mult}, 잔고:{total_eval:,})", flush=True)
+    return result
 
 
 def load_signals():
@@ -143,12 +196,18 @@ def is_market_safe(signals):
     return True, mc.get("verdict_reason", "")
 
 
-def get_target_stocks(signals):
-    """진입 대상 종목 추출"""
+def get_target_stocks(signals, signal_filter=None):
+    """
+    진입 대상 종목 추출
+    signal_filter: "day_open_attack" | "day_pullback_entry" | None(전체)
+    S5: optimized_params.method == "individual" 이면 최적화된 sl/tp_multiplier로 SL/TP 재산출
+    """
     dt = signals.get("day_trade", {})
     targets = []
     seen = set()
     for sig_type in ["day_open_attack", "day_pullback_entry"]:
+        if signal_filter and sig_type != signal_filter:
+            continue
         for stock in dt.get(sig_type, []):
             code = stock.get("code")
             if not code or code in seen:
@@ -158,16 +217,35 @@ def get_target_stocks(signals):
             if am.get("disqualified"):
                 continue
             seen.add(code)
+
+            eg = stock.get("entry_guide", {})
+            op = stock.get("optimized_params", {})
+            entry = eg.get("entry", 0)
+            atr14 = eg.get("atr14", 0)
+
+            # S5: 개별 최적 파라미터가 있으면 SL/TP 재계산
+            if op.get("method") == "individual" and entry > 0 and atr14 > 0:
+                sl_mult = op.get("sl_multiplier", 0.9)
+                tp_mult = op.get("tp_multiplier", 1.3)
+                stop_loss = int(entry - sl_mult * atr14)
+                target = int(entry + tp_mult * atr14)
+                sl_source = f"optimized({sl_mult}/{tp_mult})"
+            else:
+                stop_loss = eg.get("stop_loss")
+                target = eg.get("target")
+                sl_source = "default(0.9/1.3)"
+
             targets.append({
                 "code": code,
                 "name": stock.get("name"),
                 "signal_type": sig_type,
                 "score": stock.get("day_trade_score", 0),
-                "entry": stock.get("entry_guide", {}).get("entry"),
-                "stop_loss": stock.get("entry_guide", {}).get("stop_loss"),
-                "target": stock.get("entry_guide", {}).get("target"),
-                "atr14": stock.get("entry_guide", {}).get("atr14"),
-                "optimized_params": stock.get("optimized_params", {}),
+                "entry": entry,
+                "stop_loss": stop_loss,
+                "target": target,
+                "atr14": atr14,
+                "sl_source": sl_source,
+                "optimized_params": op,
             })
     return targets
 
@@ -221,30 +299,21 @@ def run_entry():
 
     # 1. 킬스위치 체크
     if is_kill_switch_active(signals):
-        print("🚫 킬스위치 발동 — 자동매매 중단")
+        msg = f"[Stock1] 킬스위치 발동 — 자동매매 중단 ({today})"
+        print(f"🚫 {msg}")
+        send_telegram(msg)
         return
 
     # 2. Go/No-Go 판정 체크
     safe, reason = is_market_safe(signals)
     if not safe:
-        print(f"🔴 시장 위험 판정 — 진입 스킵 ({reason})")
+        msg = f"[Stock1] 시장 위험 판정 — 진입 스킵\n{reason}"
+        print(f"🔴 {msg}")
+        send_telegram(msg)
         return
     print(f"✅ 시장 판정: {reason}")
 
-    # 3. 일일 손실 체크 (전일 손실)
-    today_pnl = check_daily_loss(trades)
-    if today_pnl <= MAX_DAILY_LOSS:
-        print(f"🚫 일일 최대 손실 초과 ({today_pnl:,}원) — 진입 중단")
-        return
-
-    # 4. 진입 대상 종목
-    targets = get_target_stocks(signals)
-    if not targets:
-        print("진입 대상 없음")
-        return
-    print(f"\n진입 대상: {len(targets)}종목")
-
-    # 5. KIS 모드 설정 + 잔고 확인
+    # 3. KIS 모드 설정 + 잔고 확인 (손실 한도 계산에 필요)
     ko.set_mode(MODE)
     bal = ko.get_balance()
     print(f"가용 자금: {bal['available_cash']:,}원 (총 평가 {bal['total_eval']:,}원)")
@@ -253,73 +322,60 @@ def run_entry():
         print("❌ 가용 자금 부족 (10만원 미만)")
         return
 
-    # 6. 종목별 매수 실행
-    print("\n[매수 주문]")
-    new_records = []
-    for t in targets:
-        entry_price = t["entry"]
-        qty = calculate_position_size(bal["available_cash"], entry_price, len(targets))
-        if qty <= 0:
-            print(f"  {t['name']}({t['code']}): 수량 0 → 스킵")
-            continue
-
-        try:
-            result = ko.buy(t["code"], qty)
-            print(f"  ✅ {t['name']}({t['code']}) {qty}주 매수 (주문번호 {result['order_no']})")
-            time.sleep(0.5)  # KIS 초당 거래 제한 회피
-            new_records.append({
-                "date": today_str(),
-                "code": t["code"],
-                "name": t["name"],
-                "signal_type": t["signal_type"],
-                "score": t["score"],
-                "entry_planned": entry_price,
-                "qty": qty,
-                "stop_loss": t["stop_loss"],
-                "target": t["target"],
-                "atr14": t["atr14"],
-                "optimized_params": t["optimized_params"],
-                "buy_order_no": result["order_no"],
-                "buy_time": now_iso(),
-                "status": "open",
-                "mode": MODE,
-            })
-        except Exception as e:
-            print(f"  ❌ {t['name']} 매수 실패: {e}")
-
-    if new_records:
-        trades["records"].extend(new_records)
-        save_trades(trades)
-        print(f"\n✅ {len(new_records)}건 매수 완료, trades.json 업데이트")
-
-
-# ──────────────────────────────────────────────
-# 청산 (15:20)
-# ──────────────────────────────────────────────
-
-def run_exit():
-    print("=" * 60)
-    print(f"Stock1 자동매매 청산 ({MODE.upper()} 모드)")
-    print(f"실행 시간: {now_iso()}")
-    print("=" * 60)
-
-    # KIS 모드 설정 + 현재 잔고 조회 (잔고 기준으로 청산 — 더 안전)
-    ko.set_mode(MODE)
-    bal_before = ko.get_balance()
-    holdings = bal_before["holdings"]
-
-    if not holdings:
-        print("청산 대상 없음 (보유 종목 0건)")
+    # 4. S6: 동적 일일 손실 한도 체크
+    max_daily_loss = calc_dynamic_max_loss(bal["total_eval"], signals)
+    today_pnl = check_daily_loss(trades)
+    if today_pnl <= max_daily_loss:
+        msg = f"[Stock1] 일일 최대 손실 초과 ({today_pnl:,}원 ≤ {max_daily_loss:,}원) — 진입 중단"
+        print(f"🚫 {msg}")
+        send_telegram(msg)
         return
 
-    print(f"청산 대상: {len(holdings)}종목 (현재 잔고 기준)")
+    # 5. 진입 대상 종목 + 매수 (attack/pullback 전부)
+    _run_buy(signals, "day_open_attack", trades, bal)
+    _run_buy(signals, "day_pullback_entry", trades, bal)
 
-    # trades.json에서 오늘 진입 기록 매핑 (있으면 업데이트, 없으면 새로 기록)
-    trades = load_trades()
+
+# ──────────────────────────────────────────────
+# 청산 (15:20, 비상/수동용)
+# ──────────────────────────────────────────────
+
+# ──────────────────────────────────────────────
+# 공통 매도 헬퍼
+# ──────────────────────────────────────────────
+
+def _sell_positions(trades, signal_type_filter=None):
+    """
+    KIS 잔고에서 종목을 매도하고 trades.json을 갱신한다.
+    signal_type_filter: None이면 전 종목, 지정하면 해당 signal_type의 open/exit_failed만 매도
+    반환: 이번에 closed된 레코드 리스트
+    """
+    ko.set_mode(MODE)
+    holdings = ko.get_balance()["holdings"]
     today = today_str()
-    today_records = {r["code"]: r for r in trades["records"]
-                     if r.get("date") == today and r.get("status") in ("open", "exit_failed")}
 
+    if signal_type_filter:
+        # trades.json 기준으로 대상 코드 선별
+        target_codes = {
+            r["code"] for r in trades["records"]
+            if r.get("status") in ("open", "exit_failed")
+            and r.get("signal_type") == signal_type_filter
+        }
+        holdings = [h for h in holdings if h["code"] in target_codes]
+
+    if not holdings:
+        label = signal_type_filter or "전체"
+        print(f"청산 대상 없음 ({label})")
+        return []
+
+    print(f"청산 대상: {len(holdings)}종목")
+
+    def find_open_record(code):
+        matches = [r for r in trades["records"]
+                   if r.get("code") == code and r.get("status") in ("open", "exit_failed")]
+        return min(matches, key=lambda r: r.get("date", "")) if matches else None
+
+    closed_now = []
     print("\n[매도 주문]")
     for h in holdings:
         code = h["code"]
@@ -330,20 +386,13 @@ def run_exit():
             buy_price = h["avg_price"]
             pnl = (sell_price - buy_price) * qty
             pnl_pct = round((sell_price - buy_price) / buy_price * 100, 2) if buy_price > 0 else 0
-            print(f"  ✅ {h['name']}({code}) {qty}주 매도 → 손익 {pnl:+,}원 ({pnl_pct:+.2f}%)")
+            print(f"  [OK] {h['name']}({code}) {qty}주 매도 -> 손익 {pnl:+,}원 ({pnl_pct:+.2f}%)")
             time.sleep(0.5)
 
-            # trades.json 업데이트 (오늘 기록이 있으면 갱신, 없으면 추가)
-            r = today_records.get(code)
+            r = find_open_record(code)
             if r is None:
-                r = {
-                    "date": today,
-                    "code": code,
-                    "name": h["name"],
-                    "signal_type": "manual_exit",
-                    "qty": qty,
-                    "mode": MODE,
-                }
+                r = {"date": today, "code": code, "name": h["name"],
+                     "signal_type": signal_type_filter or "manual_exit", "qty": qty, "mode": MODE}
                 trades["records"].append(r)
             r["sell_order_no"] = result["order_no"]
             r["sell_time"] = now_iso()
@@ -353,33 +402,272 @@ def run_exit():
             r["pnl"] = pnl
             r["pnl_pct"] = pnl_pct
             r["status"] = "closed"
+            closed_now.append(r)
         except Exception as e:
-            print(f"  ❌ {h['name']} 매도 실패: {e}")
-            r = today_records.get(code)
+            print(f"  [FAIL] {h['name']} 매도 실패: {e}")
+            r = find_open_record(code)
             if r:
                 r["status"] = "exit_failed"
 
+    return closed_now
+
+
+def _print_summary_and_notify(trades, today, label="청산 완료"):
+    """오늘 청산된 전체 거래 요약 출력 + 텔레그램 전송"""
+    closed = [r for r in trades["records"]
+              if r.get("status") == "closed" and r.get("sell_time", "").startswith(today)]
+    if not closed:
+        return
+    total_pnl = sum(r["pnl"] for r in closed)
+    wins = [r for r in closed if r["pnl"] > 0]
+    losses = [r for r in closed if r["pnl"] < 0]
+    avg_pct = sum(r["pnl_pct"] for r in closed) / len(closed)
+    print(f"\n[일일 요약 {today}]")
+    print(f"  거래: {len(closed)}건 ({len(wins)}승 {len(losses)}패)")
+    print(f"  총 손익: {total_pnl:+,}원  평균 수익률: {avg_pct:+.2f}%")
+    lines = [
+        f"[Stock1] {today} {label} ({MODE.upper()})",
+        f"거래 {len(closed)}건 | {len(wins)}승 {len(losses)}패 | 총손익 {total_pnl:+,}원 ({avg_pct:+.2f}%)",
+    ]
+    for r in closed:
+        lines.append(f"  {r['name']}({r['code']}) {r.get('pnl', 0):+,}원 ({r.get('pnl_pct', 0):+.2f}%)")
+    send_telegram("\n".join(lines))
+
+
+# ──────────────────────────────────────────────
+# 공통 매수 헬퍼
+# ──────────────────────────────────────────────
+
+def _run_buy(signals, signal_filter, trades, bal):
+    """
+    signal_filter 타입 종목을 매수하고 trades 레코드에 추가한다.
+    반환: 매수된 레코드 수
+    """
+    targets = get_target_stocks(signals, signal_filter)
+    if not targets:
+        print(f"진입 대상 없음 ({signal_filter})")
+        return 0
+
+    today = today_str()
+    print(f"\n진입 대상: {len(targets)}종목 ({signal_filter})")
+    print("\n[매수 주문]")
+    new_records = []
+    for t in targets:
+        entry_price = t["entry"]
+        qty = calculate_position_size(bal["available_cash"], entry_price, len(targets))
+        if qty <= 0:
+            print(f"  {t['name']}({t['code']}): 수량 0 -> 스킵")
+            continue
+        try:
+            result = ko.buy(t["code"], qty)
+            print(f"  [OK] {t['name']}({t['code']}) {qty}주 매수 (SL/TP:{t.get('sl_source','')})")
+            time.sleep(0.5)
+            new_records.append({
+                "date": today,
+                "code": t["code"],
+                "name": t["name"],
+                "signal_type": t["signal_type"],
+                "score": t["score"],
+                "entry_planned": entry_price,
+                "qty": qty,
+                "stop_loss": t["stop_loss"],
+                "target": t["target"],
+                "atr14": t["atr14"],
+                "sl_source": t.get("sl_source", "default"),
+                "optimized_params": t["optimized_params"],
+                "buy_order_no": result["order_no"],
+                "buy_time": now_iso(),
+                "status": "open",
+                "mode": MODE,
+            })
+        except Exception as e:
+            print(f"  [FAIL] {t['name']} 매수 실패: {e}")
+
+    if new_records:
+        trades["records"].extend(new_records)
+        save_trades(trades)
+        msg_lines = [f"[Stock1] {today} 매수 완료 ({MODE.upper()}) [{signal_filter}]"]
+        for rec in new_records:
+            msg_lines.append(f"  {rec['name']}({rec['code']}) {rec['qty']}주")
+        send_telegram("\n".join(msg_lines))
+    return len(new_records)
+
+
+# ──────────────────────────────────────────────
+# 09:00 장초반 진입
+# ──────────────────────────────────────────────
+
+def run_attack():
+    """09:00 — day_open_attack 종목 매수. 09:30 이후면 스킵."""
+    print("=" * 60)
+    print(f"Stock1 장초반 진입 ({MODE.upper()} 모드)")
+    print(f"실행 시간: {now_iso()}")
+    print("=" * 60)
+
+    now = now_kst().time()
+    if now > dtime(9, 30):
+        print(f"진입 시간 종료 ({now.strftime('%H:%M:%S')} > 09:30) - 스킵")
+        return
+
+    signals = load_signals()
+    if not signals:
+        print("signals.json 없음")
+        return
+
+    trades = load_trades()
+    today = today_str()
+    already = [r for r in trades["records"]
+               if r.get("date") == today and r.get("signal_type") == "day_open_attack"]
+    if already:
+        print(f"오늘({today}) 장초반 진입 이미 완료 ({len(already)}건) - 스킵")
+        return
+
+    if is_kill_switch_active(signals):
+        msg = f"[Stock1] 킬스위치 발동 - 자동매매 중단 ({today})"
+        print(msg)
+        send_telegram(msg)
+        return
+
+    safe, reason = is_market_safe(signals)
+    if not safe:
+        msg = f"[Stock1] 시장 위험 판정 - 진입 스킵\n{reason}"
+        print(msg)
+        send_telegram(msg)
+        return
+    print(f"시장 판정: {reason}")
+
+    ko.set_mode(MODE)
+    bal = ko.get_balance()
+    print(f"가용 자금: {bal['available_cash']:,}원")
+    if bal["available_cash"] < 100_000:
+        print("가용 자금 부족 (10만원 미만)")
+        return
+
+    max_daily_loss = calc_dynamic_max_loss(bal["total_eval"], signals)
+    if check_daily_loss(trades) <= max_daily_loss:
+        msg = f"[Stock1] 일일 최대 손실 초과 - 진입 중단"
+        print(msg)
+        send_telegram(msg)
+        return
+
+    _run_buy(signals, "day_open_attack", trades, bal)
+
+
+# ──────────────────────────────────────────────
+# 09:30 교대: 장초반 강제탈출 + 눌림 진입
+# ──────────────────────────────────────────────
+
+def run_rotate():
+    """09:30 — day_open_attack 미청산 강제탈출 후 day_pullback_entry 매수."""
+    print("=" * 60)
+    print(f"Stock1 포지션 교대 ({MODE.upper()} 모드)")
+    print(f"실행 시간: {now_iso()}")
+    print("=" * 60)
+
+    trades = load_trades()
+    today = today_str()
+
+    # 1단계: 장초반 미청산 강제탈출
+    print("\n[1단계] 장초반 공략 강제탈출")
+    closed_now = _sell_positions(trades, signal_type_filter="day_open_attack")
     save_trades(trades)
 
-    # 일일 요약
-    closed = [r for r in trades["records"] if r.get("date") == today and r.get("status") == "closed"]
-    if closed:
-        total_pnl = sum(r["pnl"] for r in closed)
-        wins = [r for r in closed if r["pnl"] > 0]
-        losses = [r for r in closed if r["pnl"] < 0]
-        print(f"\n[일일 요약 {today}]")
-        print(f"  거래: {len(closed)}건 ({len(wins)}승 {len(losses)}패)")
-        print(f"  총 손익: {total_pnl:+,}원")
-        print(f"  평균 수익률: {sum(r['pnl_pct'] for r in closed) / len(closed):+.2f}%")
+    if closed_now:
+        total = sum(r["pnl"] for r in closed_now)
+        wins = sum(1 for r in closed_now if r["pnl"] > 0)
+        losses = sum(1 for r in closed_now if r["pnl"] < 0)
+        send_telegram(
+            f"[Stock1] {today} 장초반 청산 ({MODE.upper()})\n"
+            f"{len(closed_now)}건 | {wins}승 {losses}패 | {total:+,}원"
+        )
+
+    # 2단계: 눌림 진입
+    print("\n[2단계] 눌림 진입")
+    now = now_kst().time()
+    if now > dtime(10, 0):
+        print(f"눌림 진입 시간 종료 ({now.strftime('%H:%M:%S')} > 10:00) - 스킵")
+        return
+
+    signals = load_signals()
+    if not signals:
+        print("signals.json 없음")
+        return
+
+    already = [r for r in trades["records"]
+               if r.get("date") == today and r.get("signal_type") == "day_pullback_entry"]
+    if already:
+        print(f"오늘({today}) 눌림 진입 이미 완료 ({len(already)}건) - 스킵")
+        return
+
+    if is_kill_switch_active(signals):
+        print("킬스위치 발동 - 눌림 진입 스킵")
+        return
+
+    ko.set_mode(MODE)
+    bal = ko.get_balance()
+    print(f"가용 자금: {bal['available_cash']:,}원")
+    if bal["available_cash"] < 100_000:
+        print("가용 자금 부족")
+        return
+
+    _run_buy(signals, "day_pullback_entry", trades, bal)
+
+
+# ──────────────────────────────────────────────
+# 10:00 눌림 강제탈출 + 일일 요약
+# ──────────────────────────────────────────────
+
+def run_cleanup():
+    """10:00 — day_pullback_entry 미청산 강제탈출 + 일일 요약 텔레그램."""
+    print("=" * 60)
+    print(f"Stock1 눌림 청산 ({MODE.upper()} 모드)")
+    print(f"실행 시간: {now_iso()}")
+    print("=" * 60)
+
+    trades = load_trades()
+    today = today_str()
+
+    _sell_positions(trades, signal_type_filter="day_pullback_entry")
+    save_trades(trades)
+    _print_summary_and_notify(trades, today, label="일일 청산 완료")
+
+
+# ──────────────────────────────────────────────
+# 전체 청산 (비상/수동용)
+# ──────────────────────────────────────────────
+
+def run_exit():
+    print("=" * 60)
+    print(f"Stock1 자동매매 청산 ({MODE.upper()} 모드)")
+    print(f"실행 시간: {now_iso()}")
+    print("=" * 60)
+
+    trades = load_trades()
+    today = today_str()
+
+    _sell_positions(trades)
+    save_trades(trades)
+    _print_summary_and_notify(trades, today)
 
 
 def main():
     if len(sys.argv) < 2:
-        print("사용법: py auto_trader.py [entry|exit|status]")
+        print("사용법: py auto_trader.py [attack|rotate|cleanup|entry|exit|status]")
+        print("  attack  - 09:00 장초반 공략 매수")
+        print("  rotate  - 09:30 장초반 강제탈출 + 눌림 진입")
+        print("  cleanup - 10:00 눌림 강제탈출 + 일일 요약")
+        print("  entry   - (하위호환) 전체 진입")
+        print("  exit    - (비상) 전체 청산")
         sys.exit(1)
 
     cmd = sys.argv[1]
-    if cmd == "entry":
+    if cmd == "attack":
+        run_attack()
+    elif cmd == "rotate":
+        run_rotate()
+    elif cmd == "cleanup":
+        run_cleanup()
+    elif cmd == "entry":
         run_entry()
     elif cmd == "exit":
         run_exit()

@@ -1,17 +1,15 @@
-name: Auto Trade Entry (09:00 KST)
+name: Auto Trade Attack (09:00 KST)
 
 on:
   schedule:
     - cron: '0 0 * * 1-5'   # 09:00 KST (UTC 00:00), 월~금
-    - cron: '5 0 * * 1-5'   # 09:05 KST — 지연 백업
-    - cron: '10 0 * * 1-5'  # 09:10 KST — 2차 백업
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  entry:
+  attack:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,11 +22,13 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Run auto trader entry
+      - name: Run attack (장초반 공략 매수)
         env:
           KIS_MOCK_APP_KEY: ${{ secrets.KIS_MOCK_APP_KEY }}
           KIS_MOCK_APP_SECRET: ${{ secrets.KIS_MOCK_APP_SECRET }}
           KIS_MOCK_ACCOUNT_NO: ${{ secrets.KIS_MOCK_ACCOUNT_NO }}
           STOCK1_PRIVATE_PAT: ${{ secrets.STOCK1_PRIVATE_PAT }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           AUTO_TRADE_MODE: mock
-        run: python auto_trader.py entry
+        run: python auto_trader.py attack
