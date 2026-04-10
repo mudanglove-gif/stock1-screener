@@ -2,7 +2,7 @@ name: Daily Stock Screener
 
 on:
   schedule:
-    - cron: '0 7 * * 1-5'  # 매일 07:00 UTC = 16:00 KST (월~금)
+    - cron: '43 6 * * 1-5'  # 매일 06:43 UTC = 15:43 KST (비정시, GitHub Actions 지연 대응)
   workflow_dispatch:  # 수동 실행 가능
 
 permissions:
