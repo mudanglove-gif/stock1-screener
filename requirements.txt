@@ -6,3 +6,4 @@ fredapi
 requests
 beautifulsoup4
 yfinance
+statsmodels
