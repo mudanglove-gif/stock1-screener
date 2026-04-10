@@ -3924,9 +3924,9 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-04-09T21:01:49.092326+09:00",
-          "price": 101100,
-          "change_pct": 11.47,
+          "checked_at": "2026-04-10T20:57:27.344542+09:00",
+          "price": 98400,
+          "change_pct": 3.62,
           "volume": null,
           "badge": "after_hours_momentum",
           "disqualified": false,
@@ -3974,9 +3974,9 @@
         "confidence": "보통",
         "attention_flag": true,
         "after_market": {
-          "checked_at": "2026-04-09T21:01:49.797235+09:00",
-          "price": 16370,
-          "change_pct": 11.66,
+          "checked_at": "2026-04-10T20:57:28.118707+09:00",
+          "price": 16330,
+          "change_pct": 2.97,
           "volume": null,
           "badge": "after_hours_momentum",
           "disqualified": false,
@@ -4022,7 +4022,7 @@
         "confidence": "보통",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-04-09T21:01:50.321989+09:00",
+          "checked_at": "2026-04-10T20:57:28.880019+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -4072,9 +4072,9 @@
         "confidence": "보통",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-04-09T21:01:51.018907+09:00",
-          "price": 1198000,
-          "change_pct": 2.31,
+          "checked_at": "2026-04-10T20:57:29.656884+09:00",
+          "price": 1241000,
+          "change_pct": 4.64,
           "volume": null,
           "badge": "after_hours_momentum",
           "disqualified": false,
@@ -4120,7 +4120,7 @@
         "confidence": "보통",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-04-09T21:01:51.729573+09:00",
+          "checked_at": "2026-04-10T20:57:30.434722+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -4168,7 +4168,7 @@
         "confidence": "약한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-04-09T21:01:52.459875+09:00",
+          "checked_at": "2026-04-10T20:57:30.998090+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -4192,7 +4192,7 @@
         }
       }
     ],
-    "after_market_checked_at": "2026-04-09T21:01:52.459887+09:00",
+    "after_market_checked_at": "2026-04-10T20:57:30.998106+09:00",
     "after_market_status": "partial",
     "morning_check": {
       "checked_at": "2026-04-10T10:04:58.724045+09:00",
