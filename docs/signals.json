@@ -4195,31 +4195,29 @@
     "after_market_checked_at": "2026-04-10T20:57:30.998106+09:00",
     "after_market_status": "partial",
     "morning_check": {
-      "checked_at": "2026-04-10T10:04:58.724045+09:00",
+      "checked_at": "2026-04-13T10:11:02.243284+09:00",
       "verdict": "optimistic",
-      "total_score": 74,
+      "total_score": 70,
       "score_breakdown": {
-        "us_market": 21,
-        "vix": 7,
-        "korea_leading": 30,
+        "us_market": 13,
+        "vix": 12,
+        "korea_leading": 22,
         "fx": 8,
-        "events": 8
+        "events": 15
       },
       "compound_penalty": 0,
       "override_triggered": false,
       "override_reasons": [],
       "verdict_reason": "낙관",
       "details": {
-        "sp500_change_pct": 0.62,
-        "nasdaq_change_pct": 0.83,
-        "vix_close": 21.04,
-        "vix_change": -4.74,
-        "kpi200_change_pct": 2.16,
-        "usd_krw": 1478.6,
-        "usd_krw_change": 2.6,
-        "events": [
-          "한국은행 금통위"
-        ]
+        "sp500_change_pct": -0.11,
+        "nasdaq_change_pct": 0.35,
+        "vix_close": 19.49,
+        "vix_change": -1.55,
+        "kpi200_change_pct": 0.82,
+        "usd_krw": 1490.0,
+        "usd_krw_change": 4.5,
+        "events": []
       }
     }
   },
