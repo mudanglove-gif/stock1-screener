@@ -350,7 +350,9 @@
     "generated_at": "2026-04-13T09:39:41.261262",
     "macro_regime": "neutral",
     "day_open_attack": [],
-    "day_pullback_entry": []
+    "day_pullback_entry": [],
+    "after_market_checked_at": "2026-04-13T21:08:45.774640+09:00",
+    "after_market_status": "checked"
   },
   "related_articles": {},
   "summary": {
