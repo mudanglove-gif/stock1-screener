@@ -327,7 +327,16 @@
           "donchian_breakout"
         ],
         "confidence": "약한",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-04-14T21:07:08.685532+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       },
       {
         "code": "396270",
@@ -352,10 +361,21 @@
           "donchian_breakout"
         ],
         "confidence": "약한",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-04-14T21:07:09.353138+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       }
     ],
-    "day_pullback_entry": []
+    "day_pullback_entry": [],
+    "after_market_checked_at": "2026-04-14T21:07:09.353150+09:00",
+    "after_market_status": "failed"
   },
   "related_articles": {},
   "summary": {
