@@ -3215,18 +3215,138 @@
       "mc_verdict": "optimistic",
       "mc_score": 70,
       "mc_override": false
+    },
+    {
+      "date": "2026-04-14",
+      "code": "056360",
+      "name": "코위버",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 47,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 12440,
+      "entry_actual": 12940,
+      "stop_loss": 10788,
+      "target": 16293,
+      "d1_open": 12940,
+      "d1_high": 14500,
+      "d1_low": 11670,
+      "d1_close": 12460,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": -3.71
+    },
+    {
+      "date": "2026-04-14",
+      "code": "109080",
+      "name": "옵티시스",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 41,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 20400,
+      "entry_actual": 21150,
+      "stop_loss": 17657,
+      "target": 26799,
+      "d1_open": 21150,
+      "d1_high": 22800,
+      "d1_low": 17390,
+      "d1_close": 19210,
+      "target_hit": false,
+      "stop_hit": true,
+      "result": "loss",
+      "pnl_pct": -16.52
+    },
+    {
+      "date": "2026-04-14",
+      "code": "100590",
+      "name": "머큐리",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 38,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 11320,
+      "entry_actual": 12750,
+      "stop_loss": 9697,
+      "target": 15106,
+      "d1_open": 12750,
+      "d1_high": 12750,
+      "d1_low": 10300,
+      "d1_close": 11000,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": -13.73
+    },
+    {
+      "date": "2026-04-14",
+      "code": "429270",
+      "name": "시지트로닉스",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 38,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 8800,
+      "entry_actual": 8850,
+      "stop_loss": 7788,
+      "target": 11160,
+      "d1_open": 8850,
+      "d1_high": 8940,
+      "d1_low": 7840,
+      "d1_close": 8180,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": -7.57
+    },
+    {
+      "date": "2026-04-14",
+      "code": "228670",
+      "name": "레이",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 37,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 9000,
+      "entry_actual": 9430,
+      "stop_loss": 7552,
+      "target": 10447,
+      "d1_open": 9430,
+      "d1_high": 9450,
+      "d1_low": 8500,
+      "d1_close": 8840,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": -6.26
     }
   ],
   "summary": {
     "swing": {
-      "total": 107,
+      "total": 112,
       "wins": 5,
-      "losses": 7,
-      "holds": 95,
-      "win_rate": 41.7,
-      "avg_pnl": -0.42,
+      "losses": 8,
+      "holds": 99,
+      "win_rate": 38.5,
+      "avg_pnl": -0.82,
       "avg_win": 7.01,
-      "avg_loss": -1.16
+      "avg_loss": -3.08
     },
     "day_trade": {
       "total": 24,
@@ -3239,35 +3359,30 @@
       "avg_loss": -0.89
     },
     "all": {
-      "total": 131,
+      "total": 136,
       "wins": 12,
-      "losses": 8,
-      "holds": 111,
-      "win_rate": 60.0,
-      "avg_pnl": -0.56,
+      "losses": 9,
+      "holds": 115,
+      "win_rate": 57.1,
+      "avg_pnl": -0.89,
       "avg_win": 2.95,
-      "avg_loss": -1.13
+      "avg_loss": -2.84
     },
     "by_signal": {
-      "golden_cross": {
-        "total": 20,
-        "win_rate": 33.3,
-        "avg_pnl": 0.28
+      "donchian_breakout": {
+        "total": 5,
+        "win_rate": 0.0,
+        "avg_pnl": -9.56
+      },
+      "day_open_attack": {
+        "total": 12,
+        "win_rate": 75.0,
+        "avg_pnl": 0.75
       },
       "day_pullback_entry": {
         "total": 12,
         "win_rate": 100.0,
         "avg_pnl": -3.11
-      },
-      "mean_reversion": {
-        "total": 10,
-        "win_rate": 0.0,
-        "avg_pnl": -1.4
-      },
-      "oversold": {
-        "total": 17,
-        "win_rate": 50.0,
-        "avg_pnl": -1.33
       },
       "pullback": {
         "total": 20,
@@ -3279,17 +3394,27 @@
         "win_rate": 66.7,
         "avg_pnl": 0.33
       },
-      "day_open_attack": {
-        "total": 12,
-        "win_rate": 75.0,
-        "avg_pnl": 0.75
+      "mean_reversion": {
+        "total": 10,
+        "win_rate": 0.0,
+        "avg_pnl": -1.4
       },
       "breakout": {
         "total": 20,
         "win_rate": 100.0,
         "avg_pnl": -1.41
+      },
+      "oversold": {
+        "total": 17,
+        "win_rate": 50.0,
+        "avg_pnl": -1.33
+      },
+      "golden_cross": {
+        "total": 20,
+        "win_rate": 33.3,
+        "avg_pnl": 0.28
       }
     }
   },
-  "last_updated": "2026-04-13T08:35:48.278456"
+  "last_updated": "2026-04-14T08:14:50.632229"
 }
