@@ -3335,86 +3335,260 @@
       "stop_hit": false,
       "result": "hold",
       "pnl_pct": -6.26
+    },
+    {
+      "date": "2026-04-15",
+      "code": "330860",
+      "name": "네패스아크",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 38,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 33500,
+      "entry_actual": 34350,
+      "stop_loss": 27490,
+      "target": 42514,
+      "d1_open": 34350,
+      "d1_high": 36450,
+      "d1_low": 31600,
+      "d1_close": 31950,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": -6.99
+    },
+    {
+      "date": "2026-04-15",
+      "code": "402490",
+      "name": "그린리소스",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 38,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 17300,
+      "entry_actual": 18060,
+      "stop_loss": 14242,
+      "target": 21885,
+      "d1_open": 18060,
+      "d1_high": 22300,
+      "d1_low": 17850,
+      "d1_close": 21200,
+      "target_hit": true,
+      "stop_hit": false,
+      "result": "win",
+      "pnl_pct": 21.18
+    },
+    {
+      "date": "2026-04-15",
+      "code": "037030",
+      "name": "파워넷",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 38,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 8470,
+      "entry_actual": 8710,
+      "stop_loss": 7275,
+      "target": 11256,
+      "d1_open": 8710,
+      "d1_high": 9080,
+      "d1_low": 8260,
+      "d1_close": 8540,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": -1.95
+    },
+    {
+      "date": "2026-04-15",
+      "code": "396270",
+      "name": "넥스트칩",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 38,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 5160,
+      "entry_actual": 5350,
+      "stop_loss": 4307,
+      "target": 6439,
+      "d1_open": 5350,
+      "d1_high": 5360,
+      "d1_low": 5000,
+      "d1_close": 5200,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": -2.8
+    },
+    {
+      "date": "2026-04-15",
+      "code": "004985",
+      "name": "성신양회우",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 36,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 13740,
+      "entry_actual": 15280,
+      "stop_loss": 12365,
+      "target": 15114,
+      "d1_open": 15280,
+      "d1_high": 16500,
+      "d1_low": 12340,
+      "d1_close": 12540,
+      "target_hit": true,
+      "stop_hit": true,
+      "result": "loss",
+      "pnl_pct": -19.08
+    },
+    {
+      "date": "2026-04-15",
+      "code": "330860",
+      "name": "네패스아크",
+      "category": "day_trade",
+      "signal_type": "day_open_attack",
+      "score": 70,
+      "opt_method": "individual",
+      "opt_atr_period": 7,
+      "opt_sl_mult": 1.4,
+      "opt_tp_mult": 1.4,
+      "entry_planned": 33500,
+      "entry_actual": 34350,
+      "stop_loss": 28603,
+      "target": 38396,
+      "d1_open": 34350,
+      "d1_high": 36450,
+      "d1_low": 31600,
+      "d1_close": 31950,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": -6.99,
+      "mc_verdict": "optimistic",
+      "mc_score": 90,
+      "mc_override": false
+    },
+    {
+      "date": "2026-04-15",
+      "code": "396270",
+      "name": "넥스트칩",
+      "category": "day_trade",
+      "signal_type": "day_open_attack",
+      "score": 70,
+      "opt_method": "individual",
+      "opt_atr_period": 20,
+      "opt_sl_mult": 1.5,
+      "opt_tp_mult": 1.5,
+      "entry_planned": 5160,
+      "entry_actual": 5350,
+      "stop_loss": 4549,
+      "target": 5770,
+      "d1_open": 5350,
+      "d1_high": 5360,
+      "d1_low": 5000,
+      "d1_close": 5200,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": -2.8,
+      "mc_verdict": "optimistic",
+      "mc_score": 90,
+      "mc_override": false
     }
   ],
   "summary": {
     "swing": {
-      "total": 112,
-      "wins": 5,
-      "losses": 8,
-      "holds": 99,
-      "win_rate": 38.5,
-      "avg_pnl": -0.82,
-      "avg_win": 7.01,
-      "avg_loss": -3.08
+      "total": 117,
+      "wins": 6,
+      "losses": 9,
+      "holds": 102,
+      "win_rate": 40.0,
+      "avg_pnl": -0.87,
+      "avg_win": 9.37,
+      "avg_loss": -4.86
     },
     "day_trade": {
-      "total": 24,
+      "total": 26,
       "wins": 7,
       "losses": 1,
-      "holds": 16,
+      "holds": 18,
       "win_rate": 87.5,
-      "avg_pnl": -1.18,
+      "avg_pnl": -1.47,
       "avg_win": 0.05,
       "avg_loss": -0.89
     },
     "all": {
-      "total": 136,
-      "wins": 12,
-      "losses": 9,
-      "holds": 115,
-      "win_rate": 57.1,
-      "avg_pnl": -0.89,
-      "avg_win": 2.95,
-      "avg_loss": -2.84
+      "total": 143,
+      "wins": 13,
+      "losses": 10,
+      "holds": 120,
+      "win_rate": 56.5,
+      "avg_pnl": -0.98,
+      "avg_win": 4.35,
+      "avg_loss": -4.46
     },
     "by_signal": {
-      "donchian_breakout": {
-        "total": 5,
+      "mean_reversion": {
+        "total": 10,
         "win_rate": 0.0,
-        "avg_pnl": -9.56
-      },
-      "day_open_attack": {
-        "total": 12,
-        "win_rate": 75.0,
-        "avg_pnl": 0.75
-      },
-      "day_pullback_entry": {
-        "total": 12,
-        "win_rate": 100.0,
-        "avg_pnl": -3.11
+        "avg_pnl": -1.4
       },
       "pullback": {
         "total": 20,
         "win_rate": 0,
         "avg_pnl": 0.41
       },
-      "volume_spike": {
-        "total": 20,
-        "win_rate": 66.7,
-        "avg_pnl": 0.33
-      },
-      "mean_reversion": {
-        "total": 10,
-        "win_rate": 0.0,
-        "avg_pnl": -1.4
-      },
-      "breakout": {
-        "total": 20,
-        "win_rate": 100.0,
-        "avg_pnl": -1.41
-      },
       "oversold": {
         "total": 17,
         "win_rate": 50.0,
         "avg_pnl": -1.33
       },
+      "day_pullback_entry": {
+        "total": 12,
+        "win_rate": 100.0,
+        "avg_pnl": -3.11
+      },
       "golden_cross": {
         "total": 20,
         "win_rate": 33.3,
         "avg_pnl": 0.28
+      },
+      "volume_spike": {
+        "total": 20,
+        "win_rate": 66.7,
+        "avg_pnl": 0.33
+      },
+      "donchian_breakout": {
+        "total": 10,
+        "win_rate": 33.3,
+        "avg_pnl": -5.74
+      },
+      "day_open_attack": {
+        "total": 14,
+        "win_rate": 75.0,
+        "avg_pnl": -0.06
+      },
+      "breakout": {
+        "total": 20,
+        "win_rate": 100.0,
+        "avg_pnl": -1.41
       }
     }
   },
-  "last_updated": "2026-04-14T08:14:50.632229"
+  "last_updated": "2026-04-15T08:16:34.504583"
 }
