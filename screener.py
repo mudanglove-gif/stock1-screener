@@ -779,7 +779,7 @@ def check_signals(df, score, reasons):
                     dead_days += 1
                 else:
                     break
-            pre_condition_ok = dead_days >= 20
+            pre_condition_ok = dead_days >= 10
 
             # 4. 최근 60일 이내 골든크로스 반복 배제
             repeat = False
@@ -801,7 +801,7 @@ def check_signals(df, score, reasons):
             # 6. 거래량 조건
             avg_vol_50 = last.get("vol_ma50", 0) or 0
             rvol = last["volume"] / avg_vol_50 if avg_vol_50 > 0 else 0
-            volume_ok = rvol >= 1.5
+            volume_ok = rvol >= 1.2
 
             cross_abs = len(df) + cross_idx
             vol_around = df["volume"].iloc[max(0, cross_abs - 2):min(len(df), cross_abs + 3)].mean()
@@ -841,7 +841,7 @@ def check_signals(df, score, reasons):
                 atr_60 = df["atr14"].iloc[-60:].mean() if len(df) >= 60 else None
                 s_atr = 10 if (atr_now is not None and atr_60 is not None and atr_60 > 0 and atr_now < atr_60 * 0.8) else 0
                 gc_score = int(s_slope + s_rvol + s_dead + s_gap + s_vol_acc + s_ma200 + s_pos52 + s_atr)
-                if gc_score >= 60:
+                if gc_score >= 55:
                     ma20_v = int(last["ma20"]) if pd.notna(last.get("ma20")) else "?"
                     ma60_v = int(last["ma60"]) if pd.notna(last.get("ma60")) else "?"
                     signals.append(("golden_cross", f"MA20({ma20_v})×MA60({ma60_v}), RVOL {rvol:.1f}배, 강도 {gc_score}점"))
@@ -872,7 +872,7 @@ def check_signals(df, score, reasons):
 
         basic_exclude = (upper_limit_bo or bearish_bo or doji_bo or gap_pct_bo > 0.07
                          or intraday_drop_bo or not pos_ok_bo or not not_near_ath
-                         or rvol_bo < 1.8 or trading_val < 5_000_000_000)
+                         or rvol_bo < 1.5 or trading_val < 5_000_000_000)
 
         if not basic_exclude:
             best_breakout = None
@@ -929,7 +929,7 @@ def check_signals(df, score, reasons):
                 s_ma200_bo = 10 if (above_ma200_bo and pd.notna(ma50_bo) and ma50_bo > ma200_bo) else (5 if above_ma200_bo else 0)
                 s_market = 5  # 시장 추세는 별도 데이터 필요, 기본 중립
                 bo_score = int(s_tl_quality + s_bo_pct + s_rvol_bo + s_vol_contr + s_pattern_dur + s_pattern_type + s_ma200_bo + s_market)
-                if bo_score >= 65 and bo_score > best_score_bo:
+                if bo_score >= 60 and bo_score > best_score_bo:
                     early_rev = not above_ma200_bo
                     flag_str = " [추세전환초기]" if early_rev else ""
                     best_score_bo = bo_score
@@ -976,7 +976,7 @@ def check_signals(df, score, reasons):
                 tri_score = int(s_tl_q_t + s_bo_t + s_rvol_t + s_vc_t + s_dur_t + s_type_t + s_ma200_t + s_mkt_t)
                 type_label = "상승삼각형" if tri["type"] == "ascending_triangle" else "대칭삼각형"
                 tf_label_t = "단기" if lb <= 60 else "중기"
-                if tri_score >= 65 and tri_score > best_score_bo:
+                if tri_score >= 60 and tri_score > best_score_bo:
                     best_score_bo = tri_score
                     best_breakout = ("breakout", f"{type_label}({tf_label_t},{tri['duration']}일) 돌파 +{(last['close']/res_today-1)*100:.1f}%, RVOL {rvol_bo:.1f}배, 강도 {tri_score}점")
 
@@ -987,9 +987,9 @@ def check_signals(df, score, reasons):
     if len(df) >= 62 and pd.notna(last.get("ma20")) and pd.notna(last.get("ma50")) and pd.notna(last.get("ma200")):
         pb_configs = [
             # (type, lookback, min_up%, min_dd%, max_dd%, min_dur, max_dur, 1st_ma, 2nd_ma, tol%, min_score)
-            ("SHALLOW", 30, 0.15, 0.03, 0.10, 3, 10, "ma10", "ma20", 0.02, 60),
-            ("STANDARD", 60, 0.25, 0.05, 0.15, 5, 20, "ma20", "ma50", 0.025, 65),
-            ("DEEP", 120, 0.40, 0.10, 0.25, 10, 40, "ma50", "ma200", 0.03, 70),
+            ("SHALLOW", 30, 0.15, 0.03, 0.10, 3, 10, "ma10", "ma20", 0.02, 55),
+            ("STANDARD", 60, 0.25, 0.05, 0.15, 5, 20, "ma20", "ma50", 0.025, 60),
+            ("DEEP", 120, 0.40, 0.10, 0.25, 10, 40, "ma50", "ma200", 0.03, 65),
         ]
         # T0 공통 배제
         pb_upper_limit = (last["close"] / prev["close"] - 1 > 0.295) if prev["close"] > 0 else False
@@ -1135,7 +1135,7 @@ def check_signals(df, score, reasons):
                 reversal = "장악형" if engulfing else ("망치형" if hammer else ("이평재돌파" if ma_reclaim else "양봉"))
                 # T0 거래량 서지
                 t0_vol_vs_pb = last["volume"] / pb_avg_vol if pb_avg_vol > 0 else 0
-                if t0_vol_vs_pb < 1.3:
+                if t0_vol_vs_pb < 1.1:
                     continue
                 # 종가 지지선 위 + 캔들 상단 마감
                 if pd.notna(support_val) and last["close"] < support_val:
@@ -1222,18 +1222,18 @@ def check_signals(df, score, reasons):
                 os_panic_vol = True
                 break
         # 기본 배제 통과 확인
-        os_basic_ok = (os_above_ma200 and os_yearly_ret >= -0.10
+        os_basic_ok = (os_above_ma200 and os_yearly_ret >= -0.20
                        and not os_upper_limit and not os_bearish_t0 and os_close_pos >= 0.5
                        and os_max_single_drop > -0.10 and not os_gap_down and not os_panic_vol
-                       and -0.25 <= os_drop_10d <= -0.08 and 3 <= os_consec_down <= 7)
+                       and -0.25 <= os_drop_10d <= -0.05 and 2 <= os_consec_down <= 7)
         if os_basic_ok:
             best_os = None
             best_os_score = 0
             os_configs = [
                 # (type, min_score, holding, target%)
-                ("RSI_CLASSIC", 70, 7, 5.0),
-                ("RSI_SHORT", 75, 3, 3.0),
-                ("BB_BREAK", 70, 5, 4.0),
+                ("RSI_CLASSIC", 60, 7, 5.0),
+                ("RSI_SHORT", 65, 3, 3.0),
+                ("BB_BREAK", 60, 5, 4.0),
             ]
             for os_type, os_min_sc, os_hold, os_tgt in os_configs:
                 triggered = False
@@ -1381,7 +1381,7 @@ def check_signals(df, score, reasons):
             vs_trading_val = last["close"] * last["volume"]
             vs_upper_limit = (last["close"] / prev["close"] - 1 > 0.295) if prev["close"] > 0 else False
             vs_is_60max = last["volume"] >= vol_60.max()
-            if vs_methods >= 2 and vs_trading_val >= 10_000_000_000 and not vs_upper_limit:
+            if vs_methods >= 2 and vs_trading_val >= 5_000_000_000 and not vs_upper_limit:
                 # 극단 거래량 경계 (RVOL > 20)
                 vs_extreme = vs_rvol > 20
                 # 캔들 분석
@@ -1485,7 +1485,7 @@ def check_signals(df, score, reasons):
                     vs_penalty = 15 if vs_extreme else 0
                     vs_score = int(s_common + s_type_score - vs_penalty)
                     # 발동 조건
-                    min_scores = {"ACCUMULATION": 70, "CLIMAX_SELL": 75, "STOPPING": 70, "CLIMAX_BUY": 0, "DISTRIBUTION": 0}
+                    min_scores = {"ACCUMULATION": 60, "CLIMAX_SELL": 65, "STOPPING": 60, "CLIMAX_BUY": 0, "DISTRIBUTION": 0}
                     if is_buy_interest and vs_score >= min_scores.get(vs_type, 70):
                         extreme_flag = " [극단거래량]" if vs_extreme else ""
                         signals.append(("volume_spike", f"{vs_detail}, RVOL {vs_rvol:.1f}배(Z {vs_zscore:.1f}), 거래대금 {vs_trading_val/100_000_000:.0f}억, 강도 {vs_score}점{extreme_flag}"))
@@ -1518,7 +1518,7 @@ def check_signals(df, score, reasons):
             half_life = 999
         hl_ok = 3 <= half_life <= 30
         mr_pass_count = sum([hurst_ok, adf_ok, hl_ok])
-        mr_eligible = mr_pass_count >= 2
+        mr_eligible = mr_pass_count >= 1
 
         if mr_eligible:
             # --- 거래량 이상 배제 ---
@@ -1595,7 +1595,7 @@ def check_signals(df, score, reasons):
                                 s_vol_pat = min(max(0, 1 - abs(mr_rvol - 1.0) / 1.0), 1.0) * 10
                                 s_vcontract = 10 if mr_vol_contract else 0
                                 stat_score = int(s_hurst + s_adf + s_hl + s_z + s_confirm + s_trend + s_vol_pat + s_vcontract)
-                                if stat_score >= 75 and stat_score > best_mr_score:
+                                if stat_score >= 65 and stat_score > best_mr_score:
                                     hl_disp = half_life if hl_ok else 999
                                     confirm_label = f"회귀확인{mr_confirms}/5"
                                     best_mr_score = stat_score
@@ -1665,7 +1665,7 @@ def check_signals(df, score, reasons):
                             s_vol_pat_b = min(max(0, 1 - abs(mr_rvol - 1.0) / 1.0), 1.0) * 10
                             s_vcontract_b = 10 if mr_vol_contract else 0
                             bol_score = int(s_hurst_b + s_adf_b + s_hl_b + s_breach + s_confirm_b + s_trend_b + s_vol_pat_b + s_vcontract_b)
-                            if bol_score >= 75 and bol_score > best_mr_score:
+                            if bol_score >= 65 and bol_score > best_mr_score:
                                 hl_disp_b = half_life if hl_ok else 999
                                 div_label = "+다이버전스" if rsi_div else ""
                                 confirm_label_b = f"회귀확인{mr_bol_confirms}/5{div_label}"
@@ -1678,7 +1678,7 @@ def check_signals(df, score, reasons):
 
     # 듀얼모멘텀 (Quantocracy 64회)
     if pd.notna(last.get("mom_12m")) and pd.notna(last.get("mom_1m")):
-        if last["mom_12m"] > 0.15 and last["mom_1m"] > 0 and score >= 50:
+        if last["mom_12m"] > 0.05 and last["mom_1m"] > 0 and score >= 40:
             signals.append(("dual_momentum", f"12M 수익률 {last['mom_12m']:.1%}, 1M {last['mom_1m']:.1%}, 스코어 {score}"))
 
     # === v3 시그널 ===
@@ -1819,7 +1819,7 @@ def check_signals(df, score, reasons):
             _breakout = last["close"] > _pivot * 1.01
             _near_ath = last["close"] >= last["high_52w"] * 0.95
             _bullish = last["close"] > last["open"]
-            _volume_ok = _rvol >= 2.0
+            _volume_ok = _rvol >= 1.5
             _base_ok = _base_depth <= 0.30
             _trend_ok = (pd.notna(_ma50) and pd.notna(_ma150) and pd.notna(_ma200)
                          and last["close"] > _ma50 > _ma150 > _ma200)
@@ -1846,14 +1846,14 @@ def check_signals(df, score, reasons):
                 _nh_score = (_sc_rvol + _sc_breakout + _sc_base + _sc_dryup
                              + _sc_atr + _sc_ath + _sc_ma200 + _sc_value)
 
-                if _nh_score >= 60:
+                if _nh_score >= 55:
                     _pct = (last["close"] / _pivot - 1) * 100
                     signals.append(("new_high", f"전고점({int(_pivot)}원) 돌파 +{_pct:.1f}%, RVOL {_rvol:.1f}배, 강도 {int(_nh_score)}점"))
 
     # 연속 하락 후 반등 (Quantocracy 7건)
     consec = last.get("consecutive_days", 0)
     if isinstance(consec, (int, float)) and pd.notna(consec):
-        if df.iloc[-2].get("consecutive_days", 0) <= -3 and last["close"] > last["open"]:
+        if df.iloc[-2].get("consecutive_days", 0) <= -2 and last["close"] > last["open"]:
             signals.append(("bounce_after_drop", f"{abs(int(df.iloc[-2]['consecutive_days']))}일 연속 하락 후 반등 양봉"))
 
     return signals
