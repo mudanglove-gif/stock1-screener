@@ -3710,86 +3710,287 @@
       "mc_verdict": "normal",
       "mc_score": 69,
       "mc_override": false
+    },
+    {
+      "date": "2026-04-17",
+      "code": "025540",
+      "name": "한국단자",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 61,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 83400,
+      "entry_actual": 85300,
+      "stop_loss": 75278,
+      "target": 91521,
+      "d1_open": 85300,
+      "d1_high": 85700,
+      "d1_low": 83300,
+      "d1_close": 83500,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": -2.11
+    },
+    {
+      "date": "2026-04-17",
+      "code": "067730",
+      "name": "로지시스",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 53,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 3425,
+      "entry_actual": 3340,
+      "stop_loss": 3051,
+      "target": 3985,
+      "d1_open": 3340,
+      "d1_high": 3430,
+      "d1_low": 3010,
+      "d1_close": 3160,
+      "target_hit": false,
+      "stop_hit": true,
+      "result": "loss",
+      "pnl_pct": -8.65
+    },
+    {
+      "date": "2026-04-17",
+      "code": "104830",
+      "name": "원익머트리얼즈",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 48,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 52200,
+      "entry_actual": 52700,
+      "stop_loss": 45137,
+      "target": 59262,
+      "d1_open": 52700,
+      "d1_high": 53300,
+      "d1_low": 51500,
+      "d1_close": 53100,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": 0.76
+    },
+    {
+      "date": "2026-04-17",
+      "code": "075130",
+      "name": "플랜티넷",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 48,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 2750,
+      "entry_actual": 2705,
+      "stop_loss": 2532,
+      "target": 3076,
+      "d1_open": 2705,
+      "d1_high": 2705,
+      "d1_low": 2480,
+      "d1_close": 2490,
+      "target_hit": false,
+      "stop_hit": true,
+      "result": "loss",
+      "pnl_pct": -6.4
+    },
+    {
+      "date": "2026-04-17",
+      "code": "078150",
+      "name": "HB테크놀러지",
+      "category": "swing",
+      "signal_type": "donchian_breakout",
+      "score": 47,
+      "opt_method": "common",
+      "opt_atr_period": null,
+      "opt_sl_mult": null,
+      "opt_tp_mult": null,
+      "entry_planned": 2645,
+      "entry_actual": 2645,
+      "stop_loss": 2213,
+      "target": 3076,
+      "d1_open": 2645,
+      "d1_high": 2685,
+      "d1_low": 2555,
+      "d1_close": 2640,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": -0.19
+    },
+    {
+      "date": "2026-04-17",
+      "code": "033230",
+      "name": "인성정보",
+      "category": "day_trade",
+      "signal_type": "day_open_attack",
+      "score": 85,
+      "opt_method": "individual",
+      "opt_atr_period": 14,
+      "opt_sl_mult": 1.3,
+      "opt_tp_mult": 1.3,
+      "entry_planned": 2005,
+      "entry_actual": 2010,
+      "stop_loss": 1895,
+      "target": 2114,
+      "d1_open": 2010,
+      "d1_high": 2015,
+      "d1_low": 1842,
+      "d1_close": 1879,
+      "target_hit": false,
+      "stop_hit": true,
+      "result": "loss",
+      "pnl_pct": -5.72,
+      "mc_verdict": null,
+      "mc_score": null,
+      "mc_override": false
+    },
+    {
+      "date": "2026-04-17",
+      "code": "078150",
+      "name": "HB테크놀러지",
+      "category": "day_trade",
+      "signal_type": "day_open_attack",
+      "score": 75,
+      "opt_method": "individual",
+      "opt_atr_period": 10,
+      "opt_sl_mult": 1.4,
+      "opt_tp_mult": 1.4,
+      "entry_planned": 2645,
+      "entry_actual": 2645,
+      "stop_loss": 2385,
+      "target": 2904,
+      "d1_open": 2645,
+      "d1_high": 2685,
+      "d1_low": 2555,
+      "d1_close": 2640,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": -0.19,
+      "mc_verdict": null,
+      "mc_score": null,
+      "mc_override": false
+    },
+    {
+      "date": "2026-04-17",
+      "code": "023530",
+      "name": "롯데쇼핑",
+      "category": "day_trade",
+      "signal_type": "day_open_attack",
+      "score": 70,
+      "opt_method": "individual",
+      "opt_atr_period": 20,
+      "opt_sl_mult": 1.4,
+      "opt_tp_mult": 1.4,
+      "entry_planned": 121700,
+      "entry_actual": 120200,
+      "stop_loss": 112859,
+      "target": 130540,
+      "d1_open": 120200,
+      "d1_high": 122900,
+      "d1_low": 118800,
+      "d1_close": 121800,
+      "target_hit": false,
+      "stop_hit": false,
+      "result": "hold",
+      "pnl_pct": 1.33,
+      "mc_verdict": null,
+      "mc_score": null,
+      "mc_override": false
     }
   ],
   "summary": {
     "swing": {
-      "total": 122,
+      "total": 127,
       "wins": 7,
-      "losses": 9,
-      "holds": 106,
-      "win_rate": 43.8,
-      "avg_pnl": -0.83,
+      "losses": 11,
+      "holds": 109,
+      "win_rate": 38.9,
+      "avg_pnl": -0.93,
       "avg_win": 8.88,
-      "avg_loss": -4.86
+      "avg_loss": -5.34
     },
     "day_trade": {
-      "total": 29,
+      "total": 32,
       "wins": 8,
-      "losses": 2,
-      "holds": 19,
-      "win_rate": 80.0,
-      "avg_pnl": -1.78,
+      "losses": 3,
+      "holds": 21,
+      "win_rate": 72.7,
+      "avg_pnl": -1.75,
       "avg_win": 0.77,
-      "avg_loss": -8.94
+      "avg_loss": -7.87
     },
     "all": {
-      "total": 151,
+      "total": 159,
       "wins": 15,
-      "losses": 11,
-      "holds": 125,
-      "win_rate": 57.7,
-      "avg_pnl": -1.01,
+      "losses": 14,
+      "holds": 130,
+      "win_rate": 51.7,
+      "avg_pnl": -1.1,
       "avg_win": 4.56,
-      "avg_loss": -5.6
+      "avg_loss": -5.88
     },
     "by_signal": {
-      "golden_cross": {
-        "total": 20,
-        "win_rate": 33.3,
-        "avg_pnl": 0.28
-      },
-      "day_pullback_entry": {
-        "total": 12,
-        "win_rate": 100.0,
-        "avg_pnl": -3.11
-      },
-      "mean_reversion": {
-        "total": 10,
-        "win_rate": 0.0,
-        "avg_pnl": -1.4
-      },
-      "day_open_attack": {
+      "oversold": {
         "total": 17,
-        "win_rate": 66.7,
-        "avg_pnl": -0.84
-      },
-      "breakout": {
-        "total": 20,
-        "win_rate": 100.0,
-        "avg_pnl": -1.41
+        "win_rate": 50.0,
+        "avg_pnl": -1.33
       },
       "volume_spike": {
         "total": 20,
         "win_rate": 66.7,
         "avg_pnl": 0.33
       },
-      "donchian_breakout": {
-        "total": 15,
-        "win_rate": 50.0,
-        "avg_pnl": -3.8
+      "golden_cross": {
+        "total": 20,
+        "win_rate": 33.3,
+        "avg_pnl": 0.28
       },
-      "oversold": {
-        "total": 17,
-        "win_rate": 50.0,
-        "avg_pnl": -1.33
+      "donchian_breakout": {
+        "total": 20,
+        "win_rate": 33.3,
+        "avg_pnl": -3.68
+      },
+      "mean_reversion": {
+        "total": 10,
+        "win_rate": 0.0,
+        "avg_pnl": -1.4
       },
       "pullback": {
         "total": 20,
         "win_rate": 0,
         "avg_pnl": 0.41
+      },
+      "day_pullback_entry": {
+        "total": 12,
+        "win_rate": 100.0,
+        "avg_pnl": -3.11
+      },
+      "breakout": {
+        "total": 20,
+        "win_rate": 100.0,
+        "avg_pnl": -1.41
+      },
+      "day_open_attack": {
+        "total": 20,
+        "win_rate": 57.1,
+        "avg_pnl": -0.94
       }
     }
   },
-  "last_updated": "2026-04-16T08:17:03.797372"
+  "last_updated": "2026-04-17T09:27:22.590946"
 }

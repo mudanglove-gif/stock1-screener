@@ -211,6 +211,25 @@ def fetch_minute_data(stock_code: str, interval: str = "30", days: int = 30) -> 
     return df
 
 
+def fetch_minute_for_date(stock_code: str, date_str: str) -> Optional[pd.DataFrame]:
+    """
+    특정 날짜의 1분봉 데이터 (백테스트용)
+    Args:
+        stock_code: 종목코드
+        date_str: 'YYYYMMDD' 형식
+    Returns:
+        DataFrame [datetime, open, high, low, close, volume] or None
+    """
+    token = _get_access_token()
+    if token is None:
+        return None
+    rows = _fetch_one_day_minute(stock_code, date_str, token)
+    if not rows:
+        return None
+    df = pd.DataFrame(rows).drop_duplicates("datetime").sort_values("datetime").reset_index(drop=True)
+    return df
+
+
 def is_available() -> bool:
     """KIS API 사용 가능 여부 (키가 환경변수에 있는지)"""
     return _load_credentials_from_env()
