@@ -18,7 +18,7 @@ import pandas_ta as ta
 import requests
 import FinanceDataReader as fdr
 
-LOOKBACK_DAYS = 250
+LOOKBACK_DAYS = 400
 NAVER_API_DELAY = 0.1
 FRED_API_KEY = "d41ee4f2e4718a0e25f8dfabaabe3ec4"
 ECOS_API_KEY = "SA1KDIVJJYNNKZRW1K6Z"
