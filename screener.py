@@ -2095,7 +2095,7 @@ def run_dual_momentum(dm_candidates: list, today_str: str) -> None:
     with open(DM_OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
 
-    print(f"듀얼 모멘텀: {market_regime} — {DM_N}종목 선정 (신뢰도 {confidence}점, 후보 {len(universe)}개/{len(dm_candidates)}개)")
+    print(f"듀얼 모멘텀: {market_regime} - {DM_N}종목 선정 (신뢰도 {confidence}점, 후보 {len(universe)}개/{len(dm_candidates)}개)")
     for p in portfolio:
         print(f"  #{p['rank']} {p['name']}({p['code']}) 6-1M {p['return_6_1m']:.1%} R²={p['r_squared']:.2f} 점수 {p['final_score']}")
 
