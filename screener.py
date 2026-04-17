@@ -764,7 +764,7 @@ def check_signals(df, score, reasons):
             ma20_now = last.get("ma20")
             ma20_20ago = df["ma20"].iloc[-21] if len(df) >= 21 else None
             slope = ((ma20_now - ma20_20ago) / ma20_20ago) if (pd.notna(ma20_now) and pd.notna(ma20_20ago) and ma20_20ago > 0) else 0
-            slope_ok = slope >= 0.025
+            slope_ok = slope >= 0.010
 
             cross_row = df.iloc[cross_idx]
             gap_pct = (cross_row["ma20"] - cross_row["ma60"]) / cross_row["ma60"] if cross_row.get("ma60", 0) > 0 else 0
@@ -987,9 +987,9 @@ def check_signals(df, score, reasons):
     if len(df) >= 62 and pd.notna(last.get("ma20")) and pd.notna(last.get("ma50")) and pd.notna(last.get("ma200")):
         pb_configs = [
             # (type, lookback, min_up%, min_dd%, max_dd%, min_dur, max_dur, 1st_ma, 2nd_ma, tol%, min_score)
-            ("SHALLOW", 30, 0.15, 0.03, 0.10, 3, 10, "ma10", "ma20", 0.02, 55),
-            ("STANDARD", 60, 0.25, 0.05, 0.15, 5, 20, "ma20", "ma50", 0.025, 60),
-            ("DEEP", 120, 0.40, 0.10, 0.25, 10, 40, "ma50", "ma200", 0.03, 65),
+            ("SHALLOW", 30, 0.07, 0.03, 0.10, 3, 10, "ma10", "ma20", 0.02, 55),
+            ("STANDARD", 60, 0.12, 0.05, 0.15, 5, 20, "ma20", "ma50", 0.025, 60),
+            ("DEEP", 120, 0.20, 0.10, 0.25, 10, 40, "ma50", "ma200", 0.03, 65),
         ]
         # T0 공통 배제
         pb_upper_limit = (last["close"] / prev["close"] - 1 > 0.295) if prev["close"] > 0 else False
@@ -1381,7 +1381,7 @@ def check_signals(df, score, reasons):
             vs_trading_val = last["close"] * last["volume"]
             vs_upper_limit = (last["close"] / prev["close"] - 1 > 0.295) if prev["close"] > 0 else False
             vs_is_60max = last["volume"] >= vol_60.max()
-            if vs_methods >= 2 and vs_trading_val >= 5_000_000_000 and not vs_upper_limit:
+            if vs_methods >= 1 and vs_trading_val >= 5_000_000_000 and not vs_upper_limit:
                 # 극단 거래량 경계 (RVOL > 20)
                 vs_extreme = vs_rvol > 20
                 # 캔들 분석
@@ -1697,7 +1697,7 @@ def check_signals(df, score, reasons):
         if not (_cb_upper_lmt or _cb_gap or _cb_bearish or _cb_doji or _cb_close_pos < 0.5 or not _cb_tv):
             _cb_avg_vol50 = last.get("vol_ma50") or 0
             _cb_rvol = last["volume"] / _cb_avg_vol50 if _cb_avg_vol50 > 0 else 0
-            if _cb_rvol >= 2.0:
+            if _cb_rvol >= 1.5:
                 _cb_channels = []  # (type, upper_level)
 
                 # Donchian 20일 (어제 기준 채널 상단)
@@ -1817,7 +1817,7 @@ def check_signals(df, score, reasons):
             _ma200_prev = df["ma200"].iloc[-21] if len(df) >= 21 else None
 
             _breakout = last["close"] > _pivot * 1.01
-            _near_ath = last["close"] >= last["high_52w"] * 0.95
+            _near_ath = last["close"] >= last["high_52w"] * 0.85
             _bullish = last["close"] > last["open"]
             _volume_ok = _rvol >= 1.5
             _base_ok = _base_depth <= 0.30
