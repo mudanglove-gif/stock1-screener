@@ -2949,7 +2949,35 @@
       }
     ],
     "after_market_checked_at": "2026-04-30T21:22:19.750170+09:00",
-    "after_market_status": "partial"
+    "after_market_status": "partial",
+    "morning_check": {
+      "checked_at": "2026-05-01T10:28:16.092069+09:00",
+      "verdict": "normal",
+      "total_score": 67,
+      "score_breakdown": {
+        "us_market": 21,
+        "vix": 12,
+        "korea_leading": 22,
+        "fx": 4,
+        "events": 8
+      },
+      "compound_penalty": 0,
+      "override_triggered": false,
+      "override_reasons": [],
+      "verdict_reason": "보통 — 사용자 승인 필요",
+      "details": {
+        "sp500_change_pct": 1.02,
+        "nasdaq_change_pct": 0.89,
+        "vix_close": 18.81,
+        "vix_change": 0.98,
+        "kpi200_change_pct": 1.43,
+        "usd_krw": 1477.0,
+        "usd_krw_change": 11.0,
+        "events": [
+          "미국 4월 고용지표 (NFP)"
+        ]
+      }
+    }
   },
   "related_articles": {},
   "summary": {
