@@ -2597,6 +2597,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 14,
+          "sl_multiplier": 1.5,
+          "tp_multiplier": 1.5,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.889,
+          "backtest_pf": 10.18,
+          "backtest_trade_count": 36,
+          "wf_win_rate": 0.857,
+          "wf_pf": 4.66,
+          "score": 71.2,
+          "minute_validation": null
         }
       },
       {
@@ -2631,6 +2645,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 10,
+          "sl_multiplier": 1.5,
+          "tp_multiplier": 1.5,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.889,
+          "backtest_pf": 11.27,
+          "backtest_trade_count": 36,
+          "wf_win_rate": 0.778,
+          "wf_pf": 6.36,
+          "score": 71.9,
+          "minute_validation": null
         }
       },
       {
@@ -2665,6 +2693,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 10,
+          "sl_multiplier": 1.3,
+          "tp_multiplier": 1.3,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.724,
+          "backtest_pf": 2.81,
+          "backtest_trade_count": 29,
+          "wf_win_rate": 0.636,
+          "wf_pf": 1.61,
+          "score": 62.6,
+          "minute_validation": null
         }
       }
     ],
@@ -2701,6 +2743,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 10,
+          "sl_multiplier": 1.5,
+          "tp_multiplier": 1.5,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.9,
+          "backtest_pf": 10.03,
+          "backtest_trade_count": 30,
+          "wf_win_rate": 1.0,
+          "wf_pf": 999,
+          "score": 71.3,
+          "minute_validation": null
         }
       },
       {
@@ -2735,6 +2791,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 7,
+          "sl_multiplier": 1.5,
+          "tp_multiplier": 1.5,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.758,
+          "backtest_pf": 3.04,
+          "backtest_trade_count": 33,
+          "wf_win_rate": 0.8,
+          "wf_pf": 3.25,
+          "score": 65.3,
+          "minute_validation": null
         }
       },
       {
@@ -2769,6 +2839,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 7,
+          "sl_multiplier": 1.4,
+          "tp_multiplier": 1.4,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.815,
+          "backtest_pf": 5.26,
+          "backtest_trade_count": 27,
+          "wf_win_rate": 0.833,
+          "wf_pf": 7.76,
+          "score": 64.3,
+          "minute_validation": null
         }
       }
     ],
