@@ -2357,7 +2357,7 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-05-25T23:16:09.241095+09:00",
+          "checked_at": "2026-05-26T23:09:42.090115+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2405,9 +2405,9 @@
         "confidence": "보통",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-05-25T23:16:09.941355+09:00",
-          "price": 113900,
-          "change_pct": 2.71,
+          "checked_at": "2026-05-26T23:09:42.806423+09:00",
+          "price": 135300,
+          "change_pct": 19.73,
           "volume": null,
           "badge": "after_hours_momentum",
           "disqualified": false,
@@ -2453,7 +2453,7 @@
         "confidence": "보통",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-05-25T23:16:10.669311+09:00",
+          "checked_at": "2026-05-26T23:09:43.350879+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2503,11 +2503,11 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-05-25T23:16:11.402061+09:00",
-          "price": 629000,
-          "change_pct": 0.0,
+          "checked_at": "2026-05-26T23:09:44.414788+09:00",
+          "price": 644000,
+          "change_pct": 2.06,
           "volume": null,
-          "badge": null,
+          "badge": "after_hours_momentum",
           "disqualified": false,
           "disqualify_reason": null
         },
@@ -2551,7 +2551,7 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-05-25T23:16:11.952237+09:00",
+          "checked_at": "2026-05-26T23:09:45.132872+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2599,7 +2599,7 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-05-25T23:16:12.669395+09:00",
+          "checked_at": "2026-05-26T23:09:45.878883+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2623,7 +2623,7 @@
         }
       }
     ],
-    "after_market_checked_at": "2026-05-25T23:16:12.669410+09:00",
+    "after_market_checked_at": "2026-05-26T23:09:45.878902+09:00",
     "after_market_status": "partial",
     "morning_check": {
       "checked_at": "2026-05-26T10:32:33.946588+09:00",
