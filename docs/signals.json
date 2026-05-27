@@ -1709,7 +1709,16 @@
           "dual_momentum"
         ],
         "confidence": "강한",
-        "attention_flag": true
+        "attention_flag": true,
+        "after_market": {
+          "checked_at": "2026-05-27T23:32:39.312621+09:00",
+          "price": 93800,
+          "change_pct": 13.15,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       },
       {
         "code": "308080",
@@ -1734,7 +1743,16 @@
           "dual_momentum"
         ],
         "confidence": "보통",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-05-27T23:32:39.917508+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       },
       {
         "code": "001540",
@@ -1760,7 +1778,16 @@
           "bounce_after_drop"
         ],
         "confidence": "보통",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-05-27T23:32:40.530762+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       }
     ],
     "day_pullback_entry": [
@@ -1787,7 +1814,16 @@
           "dual_momentum"
         ],
         "confidence": "강한",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-05-27T23:32:41.159060+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       },
       {
         "code": "319400",
@@ -1812,7 +1848,16 @@
           "dual_momentum"
         ],
         "confidence": "보통",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-05-27T23:32:41.903204+09:00",
+          "price": 36850,
+          "change_pct": 2.64,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       },
       {
         "code": "417840",
@@ -1837,9 +1882,20 @@
           "dual_momentum"
         ],
         "confidence": "보통",
-        "attention_flag": true
+        "attention_flag": true,
+        "after_market": {
+          "checked_at": "2026-05-27T23:32:42.645579+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       }
-    ]
+    ],
+    "after_market_checked_at": "2026-05-27T23:32:42.645617+09:00",
+    "after_market_status": "partial"
   },
   "related_articles": {},
   "summary": {
