@@ -2208,7 +2208,35 @@
       }
     ],
     "after_market_checked_at": "2026-06-05T23:01:58.472569+09:00",
-    "after_market_status": "partial"
+    "after_market_status": "partial",
+    "morning_check": {
+      "checked_at": "2026-06-08T11:04:01.353165+09:00",
+      "verdict": "danger",
+      "total_score": 60,
+      "score_breakdown": {
+        "us_market": 3,
+        "vix": 12,
+        "korea_leading": 22,
+        "fx": 8,
+        "events": 15
+      },
+      "compound_penalty": 0,
+      "override_triggered": true,
+      "override_reasons": [
+        "미국 -3%↓ (S&P -2.64%, Nasdaq -4.18%)"
+      ],
+      "verdict_reason": "즉시 위험: 미국 -3%↓ (S&P -2.64%, Nasdaq -4.18%)",
+      "details": {
+        "sp500_change_pct": -2.64,
+        "nasdaq_change_pct": -4.18,
+        "vix_close": 15.4,
+        "vix_change": -0.66,
+        "kpi200_change_pct": 5.93,
+        "usd_krw": 1549.9,
+        "usd_krw_change": 9.6,
+        "events": []
+      }
+    }
   },
   "related_articles": {},
   "summary": {
