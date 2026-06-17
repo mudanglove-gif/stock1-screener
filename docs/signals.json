@@ -2209,7 +2209,35 @@
       }
     ],
     "after_market_checked_at": "2026-06-17T01:01:53.196387+09:00",
-    "after_market_status": "partial"
+    "after_market_status": "partial",
+    "morning_check": {
+      "checked_at": "2026-06-17T11:06:55.026730+09:00",
+      "verdict": "normal",
+      "total_score": 46,
+      "score_breakdown": {
+        "us_market": 3,
+        "vix": 12,
+        "korea_leading": 15,
+        "fx": 8,
+        "events": 8
+      },
+      "compound_penalty": 0,
+      "override_triggered": false,
+      "override_reasons": [],
+      "verdict_reason": "보통 — 사용자 승인 필요",
+      "details": {
+        "sp500_change_pct": -0.57,
+        "nasdaq_change_pct": -1.15,
+        "vix_close": 16.2,
+        "vix_change": -1.48,
+        "kpi200_change_pct": 0.14,
+        "usd_krw": 1513.6,
+        "usd_krw_change": 2.6,
+        "events": [
+          "FOMC 금리 결정 + 점도표 (6월)"
+        ]
+      }
+    }
   },
   "related_articles": {},
   "summary": {
