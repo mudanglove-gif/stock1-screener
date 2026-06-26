@@ -2016,7 +2016,35 @@
       }
     ],
     "after_market_checked_at": "2026-06-25T22:23:58.234839+09:00",
-    "after_market_status": "partial"
+    "after_market_status": "partial",
+    "morning_check": {
+      "checked_at": "2026-06-26T10:54:11.447758+09:00",
+      "verdict": "normal",
+      "total_score": 63,
+      "score_breakdown": {
+        "us_market": 13,
+        "vix": 12,
+        "korea_leading": 22,
+        "fx": 8,
+        "events": 8
+      },
+      "compound_penalty": 0,
+      "override_triggered": false,
+      "override_reasons": [],
+      "verdict_reason": "보통 — 사용자 승인 필요",
+      "details": {
+        "sp500_change_pct": -0.01,
+        "nasdaq_change_pct": -0.46,
+        "vix_close": 18.63,
+        "vix_change": -0.86,
+        "kpi200_change_pct": 4.36,
+        "usd_krw": 1547.8,
+        "usd_krw_change": 2.8,
+        "events": [
+          "미국 5월 PCE"
+        ]
+      }
+    }
   },
   "related_articles": {},
   "summary": {
