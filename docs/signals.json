@@ -1988,7 +1988,16 @@
           "bounce_after_drop"
         ],
         "confidence": "강한",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-07-09T22:52:26.144846+09:00",
+          "price": 55300,
+          "change_pct": 2.03,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       },
       {
         "code": "000500",
@@ -2014,7 +2023,16 @@
           "bounce_after_drop"
         ],
         "confidence": "보통",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-07-09T22:52:26.563714+09:00",
+          "price": 239500,
+          "change_pct": 3.01,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       },
       {
         "code": "122350",
@@ -2039,9 +2057,20 @@
           "dual_momentum"
         ],
         "confidence": "약한",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-07-09T22:52:27.111980+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       }
-    ]
+    ],
+    "after_market_checked_at": "2026-07-09T22:52:27.111997+09:00",
+    "after_market_status": "partial"
   },
   "related_articles": {},
   "summary": {
