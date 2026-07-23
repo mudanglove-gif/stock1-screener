@@ -2220,7 +2220,16 @@
           "donchian_breakout"
         ],
         "confidence": "강한",
-        "attention_flag": true
+        "attention_flag": true,
+        "after_market": {
+          "checked_at": "2026-07-23T21:46:28.738679+09:00",
+          "price": 94700,
+          "change_pct": 12.47,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       },
       {
         "code": "005950",
@@ -2245,7 +2254,16 @@
           "dual_momentum"
         ],
         "confidence": "보통",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-07-23T21:46:29.330596+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       }
     ],
     "day_pullback_entry": [
@@ -2272,7 +2290,16 @@
           "bounce_after_drop"
         ],
         "confidence": "강한",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-07-23T21:46:30.240297+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       },
       {
         "code": "105560",
@@ -2297,7 +2324,16 @@
           "dual_momentum"
         ],
         "confidence": "보통",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-07-23T21:46:30.911868+09:00",
+          "price": 176600,
+          "change_pct": 0.86,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       },
       {
         "code": "111770",
@@ -2322,9 +2358,20 @@
           "dual_momentum"
         ],
         "confidence": "약한",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-07-23T21:46:31.489388+09:00",
+          "price": 87100,
+          "change_pct": 2.11,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       }
-    ]
+    ],
+    "after_market_checked_at": "2026-07-23T21:46:31.489406+09:00",
+    "after_market_status": "partial"
   },
   "related_articles": {},
   "summary": {
