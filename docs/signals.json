@@ -1893,10 +1893,21 @@
           "dual_momentum"
         ],
         "confidence": "보통",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-07-24T21:41:39.471648+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       }
     ],
-    "day_pullback_entry": []
+    "day_pullback_entry": [],
+    "after_market_checked_at": "2026-07-24T21:41:39.471660+09:00",
+    "after_market_status": "failed"
   },
   "related_articles": {},
   "summary": {
