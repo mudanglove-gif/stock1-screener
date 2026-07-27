@@ -1921,7 +1921,33 @@
     ],
     "day_pullback_entry": [],
     "after_market_checked_at": "2026-07-24T21:41:39.471660+09:00",
-    "after_market_status": "failed"
+    "after_market_status": "failed",
+    "morning_check": {
+      "checked_at": "2026-07-27T10:20:42.581352+09:00",
+      "verdict": "optimistic",
+      "total_score": 70,
+      "score_breakdown": {
+        "us_market": 13,
+        "vix": 12,
+        "korea_leading": 22,
+        "fx": 8,
+        "events": 15
+      },
+      "compound_penalty": 0,
+      "override_triggered": false,
+      "override_reasons": [],
+      "verdict_reason": "낙관",
+      "details": {
+        "sp500_change_pct": 0.05,
+        "nasdaq_change_pct": -0.64,
+        "vix_close": 18.7,
+        "vix_change": 2.06,
+        "kpi200_change_pct": 1.28,
+        "usd_krw": 1464.6,
+        "usd_krw_change": 2.1,
+        "events": []
+      }
+    }
   },
   "related_articles": {},
   "summary": {
