@@ -1893,9 +1893,20 @@
           "dual_momentum"
         ],
         "confidence": "약한",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-07-28T21:59:49.746164+09:00",
+          "price": 88800,
+          "change_pct": 2.3,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       }
-    ]
+    ],
+    "after_market_checked_at": "2026-07-28T21:59:49.746179+09:00",
+    "after_market_status": "checked"
   },
   "related_articles": {},
   "summary": {
