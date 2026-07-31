@@ -1893,9 +1893,20 @@
           "bounce_after_drop"
         ],
         "confidence": "보통",
-        "attention_flag": true
+        "attention_flag": true,
+        "after_market": {
+          "checked_at": "2026-07-31T22:03:59.838952+09:00",
+          "price": null,
+          "change_pct": null,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       }
-    ]
+    ],
+    "after_market_checked_at": "2026-07-31T22:03:59.838973+09:00",
+    "after_market_status": "failed"
   },
   "related_articles": {},
   "summary": {
