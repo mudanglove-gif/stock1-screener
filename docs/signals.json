@@ -2254,7 +2254,33 @@
       }
     ],
     "after_market_checked_at": "2026-08-04T22:06:55.879299+09:00",
-    "after_market_status": "partial"
+    "after_market_status": "partial",
+    "morning_check": {
+      "checked_at": "2026-08-05T10:08:27.759944+09:00",
+      "verdict": "optimistic",
+      "total_score": 90,
+      "score_breakdown": {
+        "us_market": 25,
+        "vix": 12,
+        "korea_leading": 30,
+        "fx": 8,
+        "events": 15
+      },
+      "compound_penalty": 0,
+      "override_triggered": false,
+      "override_reasons": [],
+      "verdict_reason": "낙관",
+      "details": {
+        "sp500_change_pct": 1.79,
+        "nasdaq_change_pct": 2.59,
+        "vix_close": 15.86,
+        "vix_change": -0.13,
+        "kpi200_change_pct": 4.04,
+        "usd_krw": 1425.2,
+        "usd_krw_change": 5.8,
+        "events": []
+      }
+    }
   },
   "related_articles": {},
   "summary": {
