@@ -2263,7 +2263,16 @@
           "donchian_breakout"
         ],
         "confidence": "보통",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-08-06T22:01:32.899128+09:00",
+          "price": 322500,
+          "change_pct": 10.26,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       },
       {
         "code": "073240",
@@ -2289,7 +2298,16 @@
           "donchian_breakout"
         ],
         "confidence": "보통",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-08-06T22:01:33.448396+09:00",
+          "price": 7920,
+          "change_pct": 7.32,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       },
       {
         "code": "483650",
@@ -2314,7 +2332,16 @@
           "dual_momentum"
         ],
         "confidence": "약한",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-08-06T22:01:33.997258+09:00",
+          "price": 249500,
+          "change_pct": 7.54,
+          "volume": null,
+          "badge": "after_hours_momentum",
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       }
     ],
     "day_pullback_entry": [
@@ -2341,9 +2368,20 @@
           "dual_momentum"
         ],
         "confidence": "보통",
-        "attention_flag": false
+        "attention_flag": false,
+        "after_market": {
+          "checked_at": "2026-08-06T22:01:34.550856+09:00",
+          "price": 33550,
+          "change_pct": 0.6,
+          "volume": null,
+          "badge": null,
+          "disqualified": false,
+          "disqualify_reason": null
+        }
       }
-    ]
+    ],
+    "after_market_checked_at": "2026-08-06T22:01:34.550869+09:00",
+    "after_market_status": "checked"
   },
   "related_articles": {},
   "summary": {
