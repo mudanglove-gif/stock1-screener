@@ -2023,10 +2023,10 @@
         "entry_guide": {
           "timing": "09:00~09:30",
           "entry": 8870,
-          "stop_loss": 8444,
-          "target": 9483,
-          "risk_reward": "1:1.43",
-          "atr14": 472.3
+          "stop_loss": 8390,
+          "target": 9349,
+          "risk_reward": "1:1.0",
+          "atr14": 479.6
         },
         "swing_signals": [
           "dual_momentum"
@@ -2041,6 +2041,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 7,
+          "sl_multiplier": 1.0,
+          "tp_multiplier": 1.0,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.731,
+          "backtest_pf": 3.6,
+          "backtest_trade_count": 52,
+          "wf_win_rate": 0.7,
+          "wf_pf": 4.97,
+          "score": 65.1,
+          "minute_validation": null
         }
       },
       {
@@ -2075,6 +2089,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 7,
+          "sl_multiplier": 1.3,
+          "tp_multiplier": 1.3,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.7,
+          "backtest_pf": 2.22,
+          "backtest_trade_count": 40,
+          "wf_win_rate": 0.727,
+          "wf_pf": 2.09,
+          "score": 56.0,
+          "minute_validation": null
         }
       }
     ],
@@ -2093,10 +2121,10 @@
         "entry_guide": {
           "timing": "09:30~10:00",
           "entry": 7250,
-          "stop_loss": 6627,
-          "target": 8149,
-          "risk_reward": "1:1.43",
-          "atr14": 691.9
+          "stop_loss": 6285,
+          "target": 8214,
+          "risk_reward": "1:1.0",
+          "atr14": 688.9
         },
         "swing_signals": [
           "dual_momentum",
@@ -2112,6 +2140,20 @@
           "badge": "after_hours_momentum",
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 10,
+          "sl_multiplier": 1.4,
+          "tp_multiplier": 1.4,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.719,
+          "backtest_pf": 3.94,
+          "backtest_trade_count": 32,
+          "wf_win_rate": 0.889,
+          "wf_pf": 7.29,
+          "score": 64.1,
+          "minute_validation": null
         }
       },
       {
@@ -2146,6 +2188,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 14,
+          "sl_multiplier": 1.5,
+          "tp_multiplier": 1.5,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.636,
+          "backtest_pf": 2.59,
+          "backtest_trade_count": 22,
+          "wf_win_rate": 1.0,
+          "wf_pf": 999,
+          "score": 52.8,
+          "minute_validation": null
         }
       },
       {
@@ -2162,10 +2218,10 @@
         "entry_guide": {
           "timing": "09:30~10:00",
           "entry": 124800,
-          "stop_loss": 118094,
-          "target": 134485,
-          "risk_reward": "1:1.43",
-          "atr14": 7450.3
+          "stop_loss": 115242,
+          "target": 134357,
+          "risk_reward": "1:1.0",
+          "atr14": 6827.1
         },
         "swing_signals": [
           "dual_momentum"
@@ -2180,6 +2236,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 7,
+          "sl_multiplier": 1.4,
+          "tp_multiplier": 1.4,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.741,
+          "backtest_pf": 2.87,
+          "backtest_trade_count": 27,
+          "wf_win_rate": 0.778,
+          "wf_pf": 6.38,
+          "score": 60.8,
+          "minute_validation": null
         }
       }
     ],
