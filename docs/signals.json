@@ -2034,7 +2034,7 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-09-10T00:04:53.978526+09:00",
+          "checked_at": "2026-09-10T23:57:25.006922+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2082,11 +2082,11 @@
         "confidence": "보통",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-09-10T00:04:54.600603+09:00",
-          "price": 66300,
-          "change_pct": 0.76,
+          "checked_at": "2026-09-10T23:57:25.663330+09:00",
+          "price": 68000,
+          "change_pct": 1.95,
           "volume": null,
-          "badge": null,
+          "badge": "after_hours_momentum",
           "disqualified": false,
           "disqualify_reason": null
         },
@@ -2130,7 +2130,7 @@
         "confidence": "보통",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-09-10T00:04:55.140985+09:00",
+          "checked_at": "2026-09-10T23:57:26.325219+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2180,9 +2180,9 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-09-10T00:04:55.560221+09:00",
-          "price": 489000,
-          "change_pct": 3.82,
+          "checked_at": "2026-09-10T23:57:26.993944+09:00",
+          "price": 481000,
+          "change_pct": 2.73,
           "volume": null,
           "badge": "after_hours_momentum",
           "disqualified": false,
@@ -2228,9 +2228,9 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-09-10T00:04:56.131335+09:00",
-          "price": 225000,
-          "change_pct": 2.17,
+          "checked_at": "2026-09-10T23:57:27.655667+09:00",
+          "price": 227000,
+          "change_pct": 1.11,
           "volume": null,
           "badge": "after_hours_momentum",
           "disqualified": false,
@@ -2269,7 +2269,7 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-09-10T00:04:56.684077+09:00",
+          "checked_at": "2026-09-10T23:57:28.167988+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2293,7 +2293,7 @@
         }
       }
     ],
-    "after_market_checked_at": "2026-09-10T00:04:56.684099+09:00",
+    "after_market_checked_at": "2026-09-10T23:57:28.168007+09:00",
     "after_market_status": "partial",
     "morning_check": {
       "checked_at": "2026-09-10T10:30:34.709553+09:00",
