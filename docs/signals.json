@@ -1,10 +1,10 @@
 {
-  "updated": "2026-09-23T13:47:33.199975",
+  "updated": "2026-09-24T13:52:22.545541",
   "total_scanned": 2763,
   "market_regime": {
     "regime": "neutral",
     "description": "neutral (위험점수:1/7, US10Y 5.0% 금리부담)",
-    "vix": 14.87,
+    "vix": 14.21,
     "us10y": 4.96,
     "usd_krw": 0,
     "base_rate": 3.0,
@@ -47,7 +47,7 @@
         "adx": 22.0,
         "stoch_k": 37.4,
         "stoch_d": 21.2,
-        "obv": -2064148,
+        "obv": -1920048,
         "ma5": 15704,
         "ma20": 15991,
         "ma60": 16722,
@@ -99,7 +99,7 @@
         "adx": 31.1,
         "stoch_k": 75.9,
         "stoch_d": 68.9,
-        "obv": 1122086,
+        "obv": 1124968,
         "ma5": 77320,
         "ma20": 72635,
         "ma60": 67486,
@@ -145,7 +145,7 @@
         "adx": 28.9,
         "stoch_k": 85.9,
         "stoch_d": 84.7,
-        "obv": 2128874,
+        "obv": 2093748,
         "ma5": 22980,
         "ma20": 22105,
         "ma60": 20610,
@@ -237,7 +237,7 @@
         "adx": 40.5,
         "stoch_k": 86.0,
         "stoch_d": 78.7,
-        "obv": 3601519,
+        "obv": 3635401,
         "ma5": 3628,
         "ma20": 3395,
         "ma60": 3080,
@@ -283,7 +283,7 @@
         "adx": 32.4,
         "stoch_k": 72.8,
         "stoch_d": 78.0,
-        "obv": 13014338,
+        "obv": 11322646,
         "ma5": 36070,
         "ma20": 34907,
         "ma60": 32952,
@@ -329,7 +329,7 @@
         "adx": 32.3,
         "stoch_k": 57.2,
         "stoch_d": 45.9,
-        "obv": 25692871,
+        "obv": 25763560,
         "ma5": 10708,
         "ma20": 10227,
         "ma60": 9943,
@@ -375,7 +375,7 @@
         "adx": 29.0,
         "stoch_k": 85.7,
         "stoch_d": 80.7,
-        "obv": 27351649,
+        "obv": 27458950,
         "ma5": 8356,
         "ma20": 7534,
         "ma60": 6468,
@@ -421,7 +421,7 @@
         "adx": 33.0,
         "stoch_k": 71.8,
         "stoch_d": 75.3,
-        "obv": 1857617,
+        "obv": 1910218,
         "ma5": 9278,
         "ma20": 8800,
         "ma60": 8038,
@@ -467,7 +467,7 @@
         "adx": 16.5,
         "stoch_k": 62.9,
         "stoch_d": 52.8,
-        "obv": 8108924,
+        "obv": 8143391,
         "ma5": 14512,
         "ma20": 14404,
         "ma60": 13769,
@@ -513,7 +513,7 @@
         "adx": 25.8,
         "stoch_k": 66.8,
         "stoch_d": 73.9,
-        "obv": 20754771,
+        "obv": 21082301,
         "ma5": 84560,
         "ma20": 79805,
         "ma60": 70171,
@@ -559,7 +559,7 @@
         "adx": 41.3,
         "stoch_k": 88.1,
         "stoch_d": 84.5,
-        "obv": 14772230,
+        "obv": 14905457,
         "ma5": 3006,
         "ma20": 2806,
         "ma60": 2528,
@@ -651,7 +651,7 @@
         "adx": 26.7,
         "stoch_k": 41.2,
         "stoch_d": 48.1,
-        "obv": 21085332,
+        "obv": 22882366,
         "ma5": 112260,
         "ma20": 111775,
         "ma60": 106980,
@@ -697,7 +697,7 @@
         "adx": 31.2,
         "stoch_k": 36.5,
         "stoch_d": 51.1,
-        "obv": 331286,
+        "obv": -213480,
         "ma5": 31060,
         "ma20": 30892,
         "ma60": 28327,
@@ -743,7 +743,7 @@
         "adx": 41.5,
         "stoch_k": 87.2,
         "stoch_d": 91.8,
-        "obv": 7420599,
+        "obv": 6889706,
         "ma5": 4949,
         "ma20": 4652,
         "ma60": 4081,
@@ -789,7 +789,7 @@
         "adx": 40.0,
         "stoch_k": 81.2,
         "stoch_d": 83.8,
-        "obv": 6611377,
+        "obv": 6677528,
         "ma5": 8554,
         "ma20": 7982,
         "ma60": 7314,
@@ -835,7 +835,7 @@
         "adx": 27.9,
         "stoch_k": 90.6,
         "stoch_d": 91.7,
-        "obv": -166619,
+        "obv": -154001,
         "ma5": 12386,
         "ma20": 11688,
         "ma60": 10391,
@@ -881,7 +881,7 @@
         "adx": 36.1,
         "stoch_k": 91.3,
         "stoch_d": 87.2,
-        "obv": 544719,
+        "obv": 1158440,
         "ma5": 7180,
         "ma20": 6397,
         "ma60": 6124,
@@ -927,7 +927,7 @@
         "adx": 18.1,
         "stoch_k": 33.3,
         "stoch_d": 42.3,
-        "obv": 6221914,
+        "obv": 6408407,
         "ma5": 14864,
         "ma20": 14781,
         "ma60": 14237,
@@ -973,7 +973,7 @@
         "adx": 28.1,
         "stoch_k": 54.7,
         "stoch_d": 60.5,
-        "obv": 1526525,
+        "obv": 1232154,
         "ma5": 26250,
         "ma20": 24920,
         "ma60": 22419,
@@ -1021,7 +1021,7 @@
         "adx": 31.1,
         "stoch_k": 75.9,
         "stoch_d": 68.9,
-        "obv": 1122086,
+        "obv": 1124968,
         "ma5": 77320,
         "ma20": 72635,
         "ma60": 67486,
@@ -1067,7 +1067,7 @@
         "adx": 29.0,
         "stoch_k": 85.7,
         "stoch_d": 80.7,
-        "obv": 27351649,
+        "obv": 27458950,
         "ma5": 8356,
         "ma20": 7534,
         "ma60": 6468,
@@ -1113,7 +1113,7 @@
         "adx": 11.0,
         "stoch_k": 76.5,
         "stoch_d": 63.5,
-        "obv": 1414003,
+        "obv": 1444703,
         "ma5": 342300,
         "ma20": 335775,
         "ma60": 312091,
@@ -1159,7 +1159,7 @@
         "adx": 34.9,
         "stoch_k": 93.4,
         "stoch_d": 88.1,
-        "obv": 852355,
+        "obv": 823084,
         "ma5": 69400,
         "ma20": 61495,
         "ma60": 57568,
@@ -1205,7 +1205,7 @@
         "adx": 40.1,
         "stoch_k": 92.5,
         "stoch_d": 93.3,
-        "obv": 32837944,
+        "obv": 32904122,
         "ma5": 37710,
         "ma20": 31050,
         "ma60": 21940,
@@ -1251,7 +1251,7 @@
         "adx": 13.9,
         "stoch_k": 81.1,
         "stoch_d": 78.0,
-        "obv": 45883075,
+        "obv": 46760714,
         "ma5": 75980,
         "ma20": 71730,
         "ma60": 66818,
@@ -1297,7 +1297,7 @@
         "adx": 30.1,
         "stoch_k": 83.8,
         "stoch_d": 82.1,
-        "obv": 24770305,
+        "obv": 24996079,
         "ma5": 23220,
         "ma20": 21067,
         "ma60": 16301,
@@ -1343,7 +1343,7 @@
         "adx": 28.8,
         "stoch_k": 83.4,
         "stoch_d": 76.9,
-        "obv": 37898395,
+        "obv": 38147665,
         "ma5": 9416,
         "ma20": 8083,
         "ma60": 7147,
@@ -1389,7 +1389,7 @@
         "adx": 29.5,
         "stoch_k": 85.9,
         "stoch_d": 84.1,
-        "obv": 11574710,
+        "obv": 11659429,
         "ma5": 7198,
         "ma20": 6173,
         "ma60": 5416,
@@ -1435,7 +1435,7 @@
         "adx": 38.0,
         "stoch_k": 84.0,
         "stoch_d": 79.4,
-        "obv": 110648414,
+        "obv": 110698762,
         "ma5": 10340,
         "ma20": 8446,
         "ma60": 7558,
@@ -1481,7 +1481,7 @@
         "adx": 12.8,
         "stoch_k": 57.7,
         "stoch_d": 40.8,
-        "obv": 22246949,
+        "obv": 22211726,
         "ma5": 23880,
         "ma20": 23087,
         "ma60": 19464,
@@ -1527,7 +1527,7 @@
         "adx": 31.8,
         "stoch_k": 81.4,
         "stoch_d": 55.1,
-        "obv": 42908104,
+        "obv": 43112028,
         "ma5": 2741,
         "ma20": 2383,
         "ma60": 2303,
@@ -1573,7 +1573,7 @@
         "adx": 21.3,
         "stoch_k": 86.4,
         "stoch_d": 83.1,
-        "obv": 20776031,
+        "obv": 20854673,
         "ma5": 11432,
         "ma20": 10465,
         "ma60": 9694,
@@ -1622,7 +1622,7 @@
         "adx": 42.0,
         "stoch_k": 66.2,
         "stoch_d": 68.7,
-        "obv": 83014878,
+        "obv": 83043240,
         "ma5": 13610,
         "ma20": 10410,
         "ma60": 8746,
@@ -1668,7 +1668,7 @@
         "adx": 30.4,
         "stoch_k": 37.8,
         "stoch_d": 37.8,
-        "obv": 2047014,
+        "obv": 2067644,
         "ma5": 19272,
         "ma20": 18272,
         "ma60": 17283,
@@ -1714,7 +1714,7 @@
         "adx": 26.1,
         "stoch_k": 52.7,
         "stoch_d": 54.0,
-        "obv": 26085017,
+        "obv": 26111513,
         "ma5": 2835,
         "ma20": 2703,
         "ma60": 2417,
@@ -1760,7 +1760,7 @@
         "adx": 37.3,
         "stoch_k": 35.6,
         "stoch_d": 40.6,
-        "obv": 425723,
+        "obv": 450988,
         "ma5": 2015,
         "ma20": 2008,
         "ma60": 1969,
@@ -1852,7 +1852,7 @@
         "adx": 55.8,
         "stoch_k": 23.6,
         "stoch_d": 17.9,
-        "obv": 1128248,
+        "obv": 1034231,
         "ma5": 2064,
         "ma20": 2058,
         "ma60": 2022,
@@ -1898,7 +1898,7 @@
         "adx": 31.6,
         "stoch_k": 40.7,
         "stoch_d": 44.2,
-        "obv": 7863551,
+        "obv": 7661586,
         "ma5": 5346,
         "ma20": 5301,
         "ma60": 5118,
@@ -1944,7 +1944,7 @@
         "adx": 15.5,
         "stoch_k": 26.0,
         "stoch_d": 21.4,
-        "obv": 100132,
+        "obv": 120138,
         "ma5": 60320,
         "ma20": 62120,
         "ma60": 59084,
@@ -1990,7 +1990,7 @@
         "adx": 38.0,
         "stoch_k": 84.0,
         "stoch_d": 79.4,
-        "obv": 110648414,
+        "obv": 110698762,
         "ma5": 10340,
         "ma20": 8446,
         "ma60": 7558,
@@ -2036,7 +2036,7 @@
         "adx": 20.2,
         "stoch_k": 81.2,
         "stoch_d": 84.9,
-        "obv": 2092352,
+        "obv": 2082336,
         "ma5": 10836,
         "ma20": 10762,
         "ma60": 9783,
@@ -2082,7 +2082,7 @@
         "adx": 12.8,
         "stoch_k": 56.3,
         "stoch_d": 66.9,
-        "obv": 31404955,
+        "obv": 31259591,
         "ma5": 5710,
         "ma20": 5564,
         "ma60": 5306,
@@ -2128,7 +2128,7 @@
         "adx": 26.9,
         "stoch_k": 62.8,
         "stoch_d": 66.9,
-        "obv": 38933193,
+        "obv": 38960233,
         "ma5": 8140,
         "ma20": 7582,
         "ma60": 7313,
@@ -2266,7 +2266,7 @@
         "adx": 36.4,
         "stoch_k": 40.8,
         "stoch_d": 44.8,
-        "obv": 20134750,
+        "obv": 15621508,
         "ma5": 7992,
         "ma20": 7634,
         "ma60": 7442,
@@ -2312,7 +2312,7 @@
         "adx": 44.7,
         "stoch_k": 76.1,
         "stoch_d": 76.8,
-        "obv": 501854318,
+        "obv": 502112286,
         "ma5": 7772,
         "ma20": 6247,
         "ma60": 5108,
@@ -2358,7 +2358,7 @@
         "adx": 35.5,
         "stoch_k": 68.9,
         "stoch_d": 69.5,
-        "obv": 359494493,
+        "obv": 359955917,
         "ma5": 2785,
         "ma20": 2377,
         "ma60": 2135,
@@ -2404,7 +2404,7 @@
         "adx": 28.3,
         "stoch_k": 82.0,
         "stoch_d": 87.5,
-        "obv": 5511070,
+        "obv": 5551198,
         "ma5": 8024,
         "ma20": 7299,
         "ma60": 6804,
@@ -2450,7 +2450,7 @@
         "adx": 17.8,
         "stoch_k": 61.0,
         "stoch_d": 61.0,
-        "obv": 7248918,
+        "obv": 7158568,
         "ma5": 2317,
         "ma20": 2281,
         "ma60": 2230,
@@ -2496,7 +2496,7 @@
         "adx": 44.1,
         "stoch_k": 57.0,
         "stoch_d": 67.6,
-        "obv": 3377955,
+        "obv": 3382017,
         "ma5": 13102,
         "ma20": 12246,
         "ma60": 9319,
@@ -2512,7 +2512,7 @@
     ]
   },
   "day_trade": {
-    "generated_at": "2026-09-23T13:47:33.190488",
+    "generated_at": "2026-09-24T13:52:22.537452",
     "macro_regime": "neutral",
     "day_open_attack": [
       {
@@ -2529,40 +2529,17 @@
         "entry_guide": {
           "timing": "09:00~09:30",
           "entry": 14030,
-          "stop_loss": 12133,
-          "target": 16052,
-          "risk_reward": "1:1.07",
-          "atr14": 1264.2
+          "stop_loss": 12774,
+          "target": 15843,
+          "risk_reward": "1:1.43",
+          "atr14": 1395.0
         },
         "swing_signals": [
           "dual_momentum",
           "bounce_after_drop"
         ],
         "confidence": "강한",
-        "attention_flag": false,
-        "after_market": {
-          "checked_at": "2026-09-24T00:25:40.359956+09:00",
-          "price": null,
-          "change_pct": null,
-          "volume": null,
-          "badge": null,
-          "disqualified": false,
-          "disqualify_reason": null
-        },
-        "optimized_params": {
-          "atr_period": 20,
-          "sl_multiplier": 1.5,
-          "tp_multiplier": 1.6,
-          "method": "individual",
-          "reason": "검증 통과",
-          "backtest_win_rate": 0.933,
-          "backtest_pf": 16.15,
-          "backtest_trade_count": 30,
-          "wf_win_rate": 1.0,
-          "wf_pf": 999,
-          "score": 73.0,
-          "minute_validation": null
-        }
+        "attention_flag": false
       },
       {
         "code": "077500",
@@ -2578,40 +2555,17 @@
         "entry_guide": {
           "timing": "09:00~09:30",
           "entry": 9150,
-          "stop_loss": 8377,
-          "target": 9922,
-          "risk_reward": "1:1.0",
-          "atr14": 594.6
+          "stop_loss": 8648,
+          "target": 9874,
+          "risk_reward": "1:1.43",
+          "atr14": 557.0
         },
         "swing_signals": [
           "dual_momentum",
           "donchian_breakout"
         ],
         "confidence": "강한",
-        "attention_flag": false,
-        "after_market": {
-          "checked_at": "2026-09-24T00:25:41.009226+09:00",
-          "price": null,
-          "change_pct": null,
-          "volume": null,
-          "badge": null,
-          "disqualified": false,
-          "disqualify_reason": null
-        },
-        "optimized_params": {
-          "atr_period": 7,
-          "sl_multiplier": 1.3,
-          "tp_multiplier": 1.3,
-          "method": "individual",
-          "reason": "검증 통과",
-          "backtest_win_rate": 0.684,
-          "backtest_pf": 1.79,
-          "backtest_trade_count": 38,
-          "wf_win_rate": 0.7,
-          "wf_pf": 2.33,
-          "score": 55.1,
-          "minute_validation": null
-        }
+        "attention_flag": false
       },
       {
         "code": "356680",
@@ -2627,39 +2581,16 @@
         "entry_guide": {
           "timing": "09:00~09:30",
           "entry": 18320,
-          "stop_loss": 15907,
-          "target": 20732,
-          "risk_reward": "1:1.0",
-          "atr14": 1723.3
+          "stop_loss": 16999,
+          "target": 20226,
+          "risk_reward": "1:1.43",
+          "atr14": 1466.9
         },
         "swing_signals": [
           "dual_momentum"
         ],
         "confidence": "강한",
-        "attention_flag": false,
-        "after_market": {
-          "checked_at": "2026-09-24T00:25:41.508367+09:00",
-          "price": null,
-          "change_pct": null,
-          "volume": null,
-          "badge": null,
-          "disqualified": false,
-          "disqualify_reason": null
-        },
-        "optimized_params": {
-          "atr_period": 7,
-          "sl_multiplier": 1.4,
-          "tp_multiplier": 1.4,
-          "method": "individual",
-          "reason": "검증 통과",
-          "backtest_win_rate": 0.867,
-          "backtest_pf": 5.68,
-          "backtest_trade_count": 30,
-          "wf_win_rate": 1.0,
-          "wf_pf": 999,
-          "score": 70.2,
-          "minute_validation": null
-        }
+        "attention_flag": false
       }
     ],
     "day_pullback_entry": [
@@ -2677,39 +2608,16 @@
         "entry_guide": {
           "timing": "09:30~10:00",
           "entry": 23450,
-          "stop_loss": 20862,
-          "target": 26037,
-          "risk_reward": "1:1.0",
-          "atr14": 1848.0
+          "stop_loss": 21786,
+          "target": 25853,
+          "risk_reward": "1:1.43",
+          "atr14": 1848.6
         },
         "swing_signals": [
           "bounce_after_drop"
         ],
         "confidence": "강한",
-        "attention_flag": false,
-        "after_market": {
-          "checked_at": "2026-09-24T00:25:42.166719+09:00",
-          "price": null,
-          "change_pct": null,
-          "volume": null,
-          "badge": null,
-          "disqualified": false,
-          "disqualify_reason": null
-        },
-        "optimized_params": {
-          "atr_period": 14,
-          "sl_multiplier": 1.4,
-          "tp_multiplier": 1.4,
-          "method": "individual",
-          "reason": "검증 통과",
-          "backtest_win_rate": 0.857,
-          "backtest_pf": 5.5,
-          "backtest_trade_count": 28,
-          "wf_win_rate": 1.0,
-          "wf_pf": 999,
-          "score": 67.0,
-          "minute_validation": null
-        }
+        "attention_flag": false
       },
       {
         "code": "069540",
@@ -2725,39 +2633,16 @@
         "entry_guide": {
           "timing": "09:30~10:00",
           "entry": 4020,
-          "stop_loss": 3451,
-          "target": 4588,
-          "risk_reward": "1:1.0",
-          "atr14": 406.0
+          "stop_loss": 3664,
+          "target": 4533,
+          "risk_reward": "1:1.43",
+          "atr14": 394.8
         },
         "swing_signals": [
           "dual_momentum"
         ],
         "confidence": "강한",
-        "attention_flag": false,
-        "after_market": {
-          "checked_at": "2026-09-24T00:25:42.822196+09:00",
-          "price": null,
-          "change_pct": null,
-          "volume": null,
-          "badge": null,
-          "disqualified": false,
-          "disqualify_reason": null
-        },
-        "optimized_params": {
-          "atr_period": 7,
-          "sl_multiplier": 1.4,
-          "tp_multiplier": 1.4,
-          "method": "individual",
-          "reason": "검증 통과",
-          "backtest_win_rate": 0.93,
-          "backtest_pf": 9.38,
-          "backtest_trade_count": 43,
-          "wf_win_rate": 1.0,
-          "wf_pf": 999,
-          "score": 71.4,
-          "minute_validation": null
-        }
+        "attention_flag": false
       },
       {
         "code": "093370",
@@ -2773,70 +2658,19 @@
         "entry_guide": {
           "timing": "09:30~10:00",
           "entry": 13940,
-          "stop_loss": 12300,
-          "target": 15579,
-          "risk_reward": "1:1.0",
-          "atr14": 1092.8
+          "stop_loss": 12968,
+          "target": 15342,
+          "risk_reward": "1:1.43",
+          "atr14": 1078.9
         },
         "swing_signals": [
           "dual_momentum",
           "bounce_after_drop"
         ],
         "confidence": "강한",
-        "attention_flag": false,
-        "after_market": {
-          "checked_at": "2026-09-24T00:25:43.333540+09:00",
-          "price": null,
-          "change_pct": null,
-          "volume": null,
-          "badge": null,
-          "disqualified": false,
-          "disqualify_reason": null
-        },
-        "optimized_params": {
-          "atr_period": 7,
-          "sl_multiplier": 1.5,
-          "tp_multiplier": 1.5,
-          "method": "individual",
-          "reason": "검증 통과",
-          "backtest_win_rate": 0.75,
-          "backtest_pf": 3.72,
-          "backtest_trade_count": 24,
-          "wf_win_rate": 1.0,
-          "wf_pf": 999,
-          "score": 59.8,
-          "minute_validation": null
-        }
+        "attention_flag": false
       }
-    ],
-    "after_market_checked_at": "2026-09-24T00:25:43.333559+09:00",
-    "after_market_status": "failed",
-    "morning_check": {
-      "checked_at": "2026-09-24T10:40:43.550772+09:00",
-      "verdict": "normal",
-      "total_score": 64,
-      "score_breakdown": {
-        "us_market": 7,
-        "vix": 15,
-        "korea_leading": 22,
-        "fx": 5,
-        "events": 15
-      },
-      "compound_penalty": 0,
-      "override_triggered": false,
-      "override_reasons": [],
-      "verdict_reason": "보통 — 사용자 승인 필요",
-      "details": {
-        "sp500_change_pct": -0.76,
-        "nasdaq_change_pct": -0.69,
-        "vix_close": 14.21,
-        "vix_change": -0.66,
-        "kpi200_change_pct": 1.15,
-        "usd_krw": 0,
-        "usd_krw_change": 0,
-        "events": []
-      }
-    }
+    ]
   },
   "related_articles": {},
   "summary": {
@@ -2853,90 +2687,90 @@
   },
   "performance": {
     "swing": {
-      "total": 833,
-      "wins": 21,
-      "losses": 30,
-      "holds": 782,
-      "win_rate": 41.2,
-      "avg_pnl": 0.05,
-      "avg_win": 12.06,
-      "avg_loss": -7.0
+      "total": 837,
+      "wins": 20,
+      "losses": 29,
+      "holds": 788,
+      "win_rate": 40.8,
+      "avg_pnl": 0.19,
+      "avg_win": 12.42,
+      "avg_loss": -4.18
     },
     "day_trade": {
-      "total": 275,
+      "total": 278,
       "wins": 24,
       "losses": 34,
-      "holds": 217,
+      "holds": 220,
       "win_rate": 41.4,
-      "avg_pnl": -0.59,
+      "avg_pnl": -0.45,
       "avg_win": 9.48,
       "avg_loss": -6.35
     },
     "all": {
-      "total": 1108,
-      "wins": 45,
-      "losses": 64,
-      "holds": 999,
-      "win_rate": 41.3,
-      "avg_pnl": -0.11,
-      "avg_win": 10.68,
-      "avg_loss": -6.66
+      "total": 1115,
+      "wins": 44,
+      "losses": 63,
+      "holds": 1008,
+      "win_rate": 41.1,
+      "avg_pnl": 0.03,
+      "avg_win": 10.81,
+      "avg_loss": -5.35
     },
     "by_signal": {
       "day_pullback_entry": {
         "total": 164,
         "win_rate": 40.0,
-        "avg_pnl": -0.78
-      },
-      "day_open_attack": {
-        "total": 111,
-        "win_rate": 42.4,
-        "avg_pnl": -0.32
-      },
-      "volume_spike": {
-        "total": 21,
-        "win_rate": 0,
-        "avg_pnl": 1.44
-      },
-      "golden_cross": {
-        "total": 7,
-        "win_rate": 0,
-        "avg_pnl": 0.99
-      },
-      "oversold": {
-        "total": 3,
-        "win_rate": 0,
-        "avg_pnl": -1.68
-      },
-      "dual_momentum": {
-        "total": 302,
-        "win_rate": 27.3,
-        "avg_pnl": -0.12
+        "avg_pnl": -0.68
       },
       "new_high": {
         "total": 24,
         "win_rate": 50.0,
         "avg_pnl": -0.25
       },
-      "donchian_breakout": {
-        "total": 136,
-        "win_rate": 45.0,
+      "volume_spike": {
+        "total": 21,
+        "win_rate": 0,
         "avg_pnl": 1.44
+      },
+      "oversold": {
+        "total": 3,
+        "win_rate": 0,
+        "avg_pnl": -1.68
+      },
+      "breakout": {
+        "total": 32,
+        "win_rate": 80.0,
+        "avg_pnl": 0.07
       },
       "pullback": {
         "total": 4,
         "win_rate": 0.0,
         "avg_pnl": -4.11
       },
-      "breakout": {
-        "total": 31,
-        "win_rate": 100.0,
-        "avg_pnl": 0.02
+      "dual_momentum": {
+        "total": 301,
+        "win_rate": 33.3,
+        "avg_pnl": 0.07
+      },
+      "day_open_attack": {
+        "total": 114,
+        "win_rate": 42.4,
+        "avg_pnl": -0.13
       },
       "bounce_after_drop": {
         "total": 305,
-        "win_rate": 27.3,
-        "avg_pnl": -0.43
+        "win_rate": 22.2,
+        "avg_pnl": -0.3
+      },
+      "donchian_breakout": {
+        "total": 140,
+        "win_rate": 42.9,
+        "avg_pnl": 1.57
+      },
+      "golden_cross": {
+        "total": 7,
+        "win_rate": 0,
+        "avg_pnl": 0.99
       }
     }
   }
