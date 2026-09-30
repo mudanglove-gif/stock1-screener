@@ -2581,7 +2581,33 @@
       }
     ],
     "after_market_checked_at": "2026-09-30T01:52:06.222836+09:00",
-    "after_market_status": "failed"
+    "after_market_status": "failed",
+    "morning_check": {
+      "checked_at": "2026-09-30T11:26:55.010527+09:00",
+      "verdict": "normal",
+      "total_score": 59,
+      "score_breakdown": {
+        "us_market": 12,
+        "vix": 12,
+        "korea_leading": 15,
+        "fx": 5,
+        "events": 15
+      },
+      "compound_penalty": 0,
+      "override_triggered": false,
+      "override_reasons": [],
+      "verdict_reason": "보통 — 사용자 승인 필요",
+      "details": {
+        "sp500_change_pct": 0,
+        "nasdaq_change_pct": 0,
+        "vix_close": 16.07,
+        "vix_change": 1.2,
+        "kpi200_change_pct": 0.06,
+        "usd_krw": 0,
+        "usd_krw_change": 0,
+        "events": []
+      }
+    }
   },
   "related_articles": {},
   "summary": {
