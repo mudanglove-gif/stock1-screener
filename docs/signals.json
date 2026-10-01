@@ -2264,7 +2264,7 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-10-01T01:47:55.684923+09:00",
+          "checked_at": "2026-10-02T02:20:41.539370+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2313,7 +2313,7 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-10-01T01:47:56.243411+09:00",
+          "checked_at": "2026-10-02T02:20:42.306804+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2361,7 +2361,7 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-10-01T01:47:56.818969+09:00",
+          "checked_at": "2026-10-02T02:20:43.094689+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2411,7 +2411,7 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-10-01T01:47:57.369681+09:00",
+          "checked_at": "2026-10-02T02:20:43.880709+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2452,9 +2452,9 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-10-01T01:47:57.796466+09:00",
-          "price": 214000,
-          "change_pct": 0.23,
+          "checked_at": "2026-10-02T02:20:44.650644+09:00",
+          "price": 212000,
+          "change_pct": 0.24,
           "volume": null,
           "badge": null,
           "disqualified": false,
@@ -2500,11 +2500,11 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-10-01T01:47:58.356161+09:00",
-          "price": 1370000,
-          "change_pct": 0.8,
+          "checked_at": "2026-10-02T02:20:45.406708+09:00",
+          "price": 1384000,
+          "change_pct": 1.17,
           "volume": null,
-          "badge": null,
+          "badge": "after_hours_momentum",
           "disqualified": false,
           "disqualify_reason": null
         },
@@ -2524,7 +2524,7 @@
         }
       }
     ],
-    "after_market_checked_at": "2026-10-01T01:47:58.356178+09:00",
+    "after_market_checked_at": "2026-10-02T02:20:45.406723+09:00",
     "after_market_status": "partial",
     "morning_check": {
       "checked_at": "2026-10-01T11:29:13.768988+09:00",
