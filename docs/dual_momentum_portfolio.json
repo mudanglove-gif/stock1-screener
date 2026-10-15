@@ -1,10 +1,10 @@
 {
-  "date": "2026-10-14",
+  "date": "2026-10-15",
   "market_regime": "NEUTRAL",
-  "kospi_return_6m": 0.2714,
+  "kospi_return_6m": 0.2317,
   "kospi_above_ma200": false,
   "market_abs_pass": false,
-  "universe_size": 145,
+  "universe_size": 142,
   "candidates_passed": 51,
   "portfolio": [],
   "warning": "시장 절대 모멘텀 미통과 — 현금 보유 권장"
