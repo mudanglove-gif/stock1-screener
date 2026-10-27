@@ -2117,10 +2117,10 @@
         "entry_guide": {
           "timing": "09:00~09:30",
           "entry": 17540,
-          "stop_loss": 16258,
-          "target": 19390,
-          "risk_reward": "1:1.43",
-          "atr14": 1423.4
+          "stop_loss": 15507,
+          "target": 19572,
+          "risk_reward": "1:1.0",
+          "atr14": 1563.8
         },
         "swing_signals": [
           "dual_momentum",
@@ -2136,6 +2136,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 10,
+          "sl_multiplier": 1.3,
+          "tp_multiplier": 1.3,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.784,
+          "backtest_pf": 2.97,
+          "backtest_trade_count": 37,
+          "wf_win_rate": 0.917,
+          "wf_pf": 16.9,
+          "score": 66.1,
+          "minute_validation": null
         }
       },
       {
@@ -2152,10 +2166,10 @@
         "entry_guide": {
           "timing": "09:00~09:30",
           "entry": 11990,
-          "stop_loss": 11147,
-          "target": 13206,
-          "risk_reward": "1:1.43",
-          "atr14": 935.9
+          "stop_loss": 10338,
+          "target": 13641,
+          "risk_reward": "1:1.0",
+          "atr14": 1101.2
         },
         "swing_signals": [
           "dual_momentum",
@@ -2171,6 +2185,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 7,
+          "sl_multiplier": 1.5,
+          "tp_multiplier": 1.5,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.667,
+          "backtest_pf": 2.02,
+          "backtest_trade_count": 30,
+          "wf_win_rate": 0.889,
+          "wf_pf": 15.44,
+          "score": 56.7,
+          "minute_validation": null
         }
       },
       {
@@ -2187,10 +2215,10 @@
         "entry_guide": {
           "timing": "09:00~09:30",
           "entry": 15070,
-          "stop_loss": 14022,
-          "target": 16582,
-          "risk_reward": "1:1.43",
-          "atr14": 1163.6
+          "stop_loss": 13372,
+          "target": 16767,
+          "risk_reward": "1:1.0",
+          "atr14": 1414.2
         },
         "swing_signals": [
           "donchian_breakout"
@@ -2205,6 +2233,20 @@
           "badge": "after_hours_momentum",
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 7,
+          "sl_multiplier": 1.2,
+          "tp_multiplier": 1.2,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.744,
+          "backtest_pf": 3.81,
+          "backtest_trade_count": 39,
+          "wf_win_rate": 0.714,
+          "wf_pf": 2.94,
+          "score": 64.4,
+          "minute_validation": null
         }
       }
     ],
@@ -2223,10 +2265,10 @@
         "entry_guide": {
           "timing": "09:30~10:00",
           "entry": 9520,
-          "stop_loss": 8634,
-          "target": 10798,
-          "risk_reward": "1:1.43",
-          "atr14": 983.5
+          "stop_loss": 7768,
+          "target": 11271,
+          "risk_reward": "1:1.0",
+          "atr14": 1167.9
         },
         "swing_signals": [
           "dual_momentum"
@@ -2241,6 +2283,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 7,
+          "sl_multiplier": 1.5,
+          "tp_multiplier": 1.5,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.882,
+          "backtest_pf": 7.53,
+          "backtest_trade_count": 34,
+          "wf_win_rate": 0.909,
+          "wf_pf": 9.96,
+          "score": 72.3,
+          "minute_validation": null
         }
       },
       {
@@ -2257,10 +2313,10 @@
         "entry_guide": {
           "timing": "09:30~10:00",
           "entry": 3170,
-          "stop_loss": 2835,
-          "target": 3653,
-          "risk_reward": "1:1.43",
-          "atr14": 372.1
+          "stop_loss": 2593,
+          "target": 3746,
+          "risk_reward": "1:1.0",
+          "atr14": 411.8
         },
         "swing_signals": [
           "dual_momentum",
@@ -2276,6 +2332,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 7,
+          "sl_multiplier": 1.4,
+          "tp_multiplier": 1.4,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.903,
+          "backtest_pf": 15.73,
+          "backtest_trade_count": 31,
+          "wf_win_rate": 1.0,
+          "wf_pf": 999,
+          "score": 72.6,
+          "minute_validation": null
         }
       },
       {
@@ -2292,10 +2362,10 @@
         "entry_guide": {
           "timing": "09:30~10:00",
           "entry": 13310,
-          "stop_loss": 11925,
-          "target": 15310,
-          "risk_reward": "1:1.43",
-          "atr14": 1538.5
+          "stop_loss": 11051,
+          "target": 15568,
+          "risk_reward": "1:1.0",
+          "atr14": 1737.4
         },
         "swing_signals": [
           "bounce_after_drop"
@@ -2310,6 +2380,20 @@
           "badge": null,
           "disqualified": false,
           "disqualify_reason": null
+        },
+        "optimized_params": {
+          "atr_period": 7,
+          "sl_multiplier": 1.3,
+          "tp_multiplier": 1.3,
+          "method": "individual",
+          "reason": "검증 통과",
+          "backtest_win_rate": 0.933,
+          "backtest_pf": 11.85,
+          "backtest_trade_count": 30,
+          "wf_win_rate": 0.889,
+          "wf_pf": 5.7,
+          "score": 70.3,
+          "minute_validation": null
         }
       }
     ],
