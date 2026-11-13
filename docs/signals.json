@@ -1930,10 +1930,10 @@
         "entry_guide": {
           "timing": "09:00~09:30",
           "entry": 8210,
-          "stop_loss": 7423,
-          "target": 8996,
+          "stop_loss": 7443,
+          "target": 8976,
           "risk_reward": "1:1.0",
-          "atr14": 524.2
+          "atr14": 510.9
         },
         "swing_signals": [
           "dual_momentum"
@@ -1978,10 +1978,10 @@
         "entry_guide": {
           "timing": "09:00~09:30",
           "entry": 31550,
-          "stop_loss": 26376,
-          "target": 36723,
+          "stop_loss": 26344,
+          "target": 36755,
           "risk_reward": "1:1.0",
-          "atr14": 3449.0
+          "atr14": 3470.5
         },
         "swing_signals": [
           "dual_momentum"
@@ -2008,7 +2008,7 @@
           "backtest_trade_count": 25,
           "wf_win_rate": 0.857,
           "wf_pf": 4.68,
-          "score": 66.9,
+          "score": 67.0,
           "minute_validation": null
         }
       }
@@ -2028,10 +2028,10 @@
         "entry_guide": {
           "timing": "09:30~10:00",
           "entry": 4150,
-          "stop_loss": 3560,
-          "target": 4739,
+          "stop_loss": 3484,
+          "target": 4815,
           "risk_reward": "1:1.0",
-          "atr14": 453.7
+          "atr14": 511.8
         },
         "swing_signals": [
           "dual_momentum"
@@ -2053,12 +2053,12 @@
           "tp_multiplier": 1.3,
           "method": "individual",
           "reason": "검증 통과",
-          "backtest_win_rate": 0.818,
-          "backtest_pf": 4.83,
-          "backtest_trade_count": 33,
-          "wf_win_rate": 0.818,
-          "wf_pf": 4.72,
-          "score": 68.7,
+          "backtest_win_rate": 0.824,
+          "backtest_pf": 5.03,
+          "backtest_trade_count": 34,
+          "wf_win_rate": 0.833,
+          "wf_pf": 5.31,
+          "score": 69.1,
           "minute_validation": null
         }
       },
@@ -2076,10 +2076,10 @@
         "entry_guide": {
           "timing": "09:30~10:00",
           "entry": 116600,
-          "stop_loss": 100485,
-          "target": 132714,
+          "stop_loss": 100935,
+          "target": 132264,
           "risk_reward": "1:1.0",
-          "atr14": 13429.0
+          "atr14": 13053.4
         },
         "swing_signals": [
           "dual_momentum"
@@ -2106,7 +2106,7 @@
           "backtest_trade_count": 48,
           "wf_win_rate": 0.846,
           "wf_pf": 6.75,
-          "score": 64.6,
+          "score": 64.5,
           "minute_validation": null
         }
       },
@@ -2124,10 +2124,10 @@
         "entry_guide": {
           "timing": "09:30~10:00",
           "entry": 206500,
-          "stop_loss": 195253,
-          "target": 217746,
+          "stop_loss": 195337,
+          "target": 217662,
           "risk_reward": "1:1.0",
-          "atr14": 8651.3
+          "atr14": 8586.2
         },
         "swing_signals": [
           "dual_momentum"
@@ -2154,7 +2154,7 @@
           "backtest_trade_count": 41,
           "wf_win_rate": 0.778,
           "wf_pf": 36.47,
-          "score": 65.0,
+          "score": 65.1,
           "minute_validation": null
         }
       }
