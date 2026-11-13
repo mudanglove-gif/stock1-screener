@@ -2162,13 +2162,13 @@
     "after_market_checked_at": "2026-11-13T03:51:16.454287+09:00",
     "after_market_status": "partial",
     "morning_check": {
-      "checked_at": "2026-11-12T13:21:43.412014+09:00",
+      "checked_at": "2026-11-13T12:39:05.831770+09:00",
       "verdict": "normal",
-      "total_score": 67,
+      "total_score": 54,
       "score_breakdown": {
-        "us_market": 12,
+        "us_market": 7,
         "vix": 12,
-        "korea_leading": 23,
+        "korea_leading": 15,
         "fx": 5,
         "events": 15
       },
@@ -2177,11 +2177,11 @@
       "override_reasons": [],
       "verdict_reason": "보통 — 사용자 승인 필요",
       "details": {
-        "sp500_change_pct": 0,
-        "nasdaq_change_pct": 0,
-        "vix_close": 19.46,
-        "vix_change": -0.46,
-        "kpi200_change_pct": 0.4,
+        "sp500_change_pct": -0.35,
+        "nasdaq_change_pct": -0.39,
+        "vix_close": 17.49,
+        "vix_change": -1.97,
+        "kpi200_change_pct": 0.23,
         "usd_krw": 0,
         "usd_krw_change": 0,
         "events": []
