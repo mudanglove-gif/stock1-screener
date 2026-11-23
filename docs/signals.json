@@ -1941,7 +1941,7 @@
         "confidence": "보통",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-11-21T04:03:20.419192+09:00",
+          "checked_at": "2026-11-24T07:34:26.376221+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -1989,7 +1989,7 @@
         "confidence": "약한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-11-21T04:03:21.156084+09:00",
+          "checked_at": "2026-11-24T07:34:26.886147+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2039,7 +2039,7 @@
         "confidence": "강한",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-11-21T04:03:21.911456+09:00",
+          "checked_at": "2026-11-24T07:34:27.388233+09:00",
           "price": null,
           "change_pct": null,
           "volume": null,
@@ -2087,11 +2087,11 @@
         "confidence": "보통",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-11-21T04:03:22.645420+09:00",
-          "price": 109700,
-          "change_pct": 6.96,
+          "checked_at": "2026-11-24T07:34:28.049569+09:00",
+          "price": 115300,
+          "change_pct": 0.0,
           "volume": null,
-          "badge": "after_hours_momentum",
+          "badge": null,
           "disqualified": false,
           "disqualify_reason": null
         },
@@ -2135,11 +2135,11 @@
         "confidence": "보통",
         "attention_flag": false,
         "after_market": {
-          "checked_at": "2026-11-21T04:03:23.379888+09:00",
-          "price": 212000,
-          "change_pct": 1.4,
+          "checked_at": "2026-11-24T07:34:28.435573+09:00",
+          "price": 202000,
+          "change_pct": 0.0,
           "volume": null,
-          "badge": "after_hours_momentum",
+          "badge": null,
           "disqualified": false,
           "disqualify_reason": null
         },
@@ -2159,7 +2159,7 @@
         }
       }
     ],
-    "after_market_checked_at": "2026-11-21T04:03:23.379904+09:00",
+    "after_market_checked_at": "2026-11-24T07:34:28.435592+09:00",
     "after_market_status": "partial",
     "morning_check": {
       "checked_at": "2026-11-23T13:03:23.380789+09:00",
