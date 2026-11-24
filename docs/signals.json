@@ -2162,28 +2162,28 @@
     "after_market_checked_at": "2026-11-24T07:34:28.435592+09:00",
     "after_market_status": "partial",
     "morning_check": {
-      "checked_at": "2026-11-23T13:03:23.380789+09:00",
+      "checked_at": "2026-11-24T16:07:16.083821+09:00",
       "verdict": "danger",
-      "total_score": 48,
+      "total_score": 75,
       "score_breakdown": {
-        "us_market": 3,
-        "vix": 3,
-        "korea_leading": 22,
+        "us_market": 25,
+        "vix": 0,
+        "korea_leading": 30,
         "fx": 5,
         "events": 15
       },
       "compound_penalty": 0,
       "override_triggered": true,
       "override_reasons": [
-        "미국 -3%↓ (S&P -3.7%, Nasdaq -5.28%)"
+        "VIX 35.89 > 35"
       ],
-      "verdict_reason": "즉시 위험: 미국 -3%↓ (S&P -3.7%, Nasdaq -5.28%)",
+      "verdict_reason": "즉시 위험: VIX 35.89 > 35",
       "details": {
-        "sp500_change_pct": -3.7,
-        "nasdaq_change_pct": -5.28,
-        "vix_close": 28.44,
-        "vix_change": 3.88,
-        "kpi200_change_pct": 3.67,
+        "sp500_change_pct": 4.73,
+        "nasdaq_change_pct": 6.51,
+        "vix_close": 35.89,
+        "vix_change": 7.45,
+        "kpi200_change_pct": 6.55,
         "usd_krw": 0,
         "usd_krw_change": 0,
         "events": []
