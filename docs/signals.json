@@ -2162,13 +2162,13 @@
     "after_market_checked_at": "2026-11-27T05:06:19.887464+09:00",
     "after_market_status": "partial",
     "morning_check": {
-      "checked_at": "2026-11-26T14:30:12.864316+09:00",
+      "checked_at": "2026-11-27T14:25:01.334213+09:00",
       "verdict": "normal",
-      "total_score": 58,
+      "total_score": 66,
       "score_breakdown": {
         "us_market": 13,
         "vix": 3,
-        "korea_leading": 22,
+        "korea_leading": 30,
         "fx": 5,
         "events": 15
       },
@@ -2181,7 +2181,7 @@
         "nasdaq_change_pct": -0.62,
         "vix_close": 26.36,
         "vix_change": -0.26,
-        "kpi200_change_pct": 1.68,
+        "kpi200_change_pct": 4.0,
         "usd_krw": 0,
         "usd_krw_change": 0,
         "events": []
